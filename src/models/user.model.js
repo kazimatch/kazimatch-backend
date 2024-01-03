@@ -23,13 +23,9 @@ export const User = database.sequelize.define('User', {
     },
     role: {
         type: DataTypes.STRING,
-        values: ['admin', 'user'],
+        values: ['admin', 'user', 'recruiter'],
         allowNull: false,
         defaultValue: 'user'
-    },
-    organizations: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: true
     },
     isVerified: {
         type: DataTypes.BOOLEAN,
@@ -41,10 +37,7 @@ export const User = database.sequelize.define('User', {
         allowNull: false,
         defaultValue: false
     },
-    groups: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: true
-    },
+
     refreshToken: {
         type: DataTypes.STRING,
         allowNull: true
@@ -54,6 +47,5 @@ export const User = database.sequelize.define('User', {
         allowNull: true
     }
 }, {
-    tableName: 'users',
-    paranoid: true,
+    tableName: 'users'
 });
