@@ -6,15 +6,6 @@ configDotenv({
 const config = {
     ENV: process.env.NODE_ENV || 'development',
     PORT: process.env.PORT || 3000,
-    GEOFENCE: {
-        url: process.env.GEOFENCE,
-        user: process.env.GEOFENCE + '/users',
-        group: process.env.GEOFENCE + '/groups',
-        rule: process.env.GEOFENCE + '/rules',
-        instance: process.env.GEOFENCE + '/instances',
-        adminRule: process.env.GEOFENCE + '/adminrules',
-        batch: process.env.GEOFENCE + '/batch/exec',
-    },
     VERSION: process.env.VERSION,
     DB: {
         port: process.env.DB_PORT,
