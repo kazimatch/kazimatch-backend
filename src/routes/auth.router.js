@@ -122,7 +122,7 @@ router.post("/reset-password",
 router.get("/verify", (/**@type {e.Request} */req, /**@type {e.Response} */ res) => {
     try {
         const { token } = req.query;
-        if (!token) return res.status(400).send({ message: "Invalid email" });
+        if (!token) return res.status(400).send({ message: "Invalid token" });
 
         const decoded = verifyToken(token);
         authController.verifyEmail(decoded.id).then((state) => res.send("<b>Success!</b>")).catch((err) => {
