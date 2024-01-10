@@ -1,12 +1,13 @@
 import { database } from "../config/index.js";
 import { DataTypes } from "sequelize";
+import { Skill } from "./skill.model.js";
 
 export const User = database.sequelize.define('User', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
     },
     fullName: {
         type: DataTypes.STRING,
@@ -43,6 +44,27 @@ export const User = database.sequelize.define('User', {
     },
     authProvider: {
         type: DataTypes.STRING,
+        allowNull: true
+    },
+    url: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    phoneNumber: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    location: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    gender: {
+        type: DataTypes.STRING,
+        values: ['male', 'female', 'non-binary'],
+        allowNull: true
+    },
+    dob: {
+        type: DataTypes.DATEONLY,
         allowNull: true
     }
 }, {

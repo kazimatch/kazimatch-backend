@@ -33,6 +33,7 @@ export class UserController {
         if (body.role) delete body.role;
         if (body.organizations) delete body.organizations;
         if (body.groups) delete body.groups;
+        if (body.password) delete body.password;
         // ------------------------------------------------------
 
         return (await this.userService.update(id, body))[0] > 0;
