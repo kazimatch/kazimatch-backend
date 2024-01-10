@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { UserService, QueueService } from "../services/index.js";
 import { hashPassword, jwtToken, verifyToken } from "../utils/crypt.js";
 import { config } from "../config/config.js";
+import { emailTemplate } from "../utils/template.js";
 export class AuthController {
     constructor() {
         this.userService = new UserService();
@@ -49,14 +50,19 @@ export class AuthController {
 
         QueueService.queue("email", {
             to: user.email,
-            subject: "Verify your email",
-            html: '<>Hello Brian</>'
+            subject: "KaziMatch Account Verification",
+            html: emailTemplate({
+                name: user.fullName,
+                message: "Welcome to KaziMatch. Please verify your email address to continue",
+                link: `${config.App.baseUrl}/api/${config.VERSION}/auth/verify-email?token=${token}`,
+                type: "Verify",
+                sign: "If you did not create an account, DO NOT click this link"
+            })
         });
 
         user.token = token;
         user.refreshToken = refreshToken;
         delete user.password;
-        console.log(user);
         return user;
     }
 
