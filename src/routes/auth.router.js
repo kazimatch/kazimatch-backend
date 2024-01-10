@@ -4,7 +4,6 @@ import { authMiddleware, loginSchema, registerSchema, resetPasswordSchema, token
 import { query, validationResult } from "express-validator";
 import e from "express";
 import { verifyToken } from "../utils/crypt.js";
-import { resetPasswordPage } from "../utils/template.js";
 import { config } from "../config/config.js";
 import chalk from "chalk";
 
@@ -62,7 +61,7 @@ router.post("/refresh", tokenSchema, async (/**@type {e.Request} */req, /**@type
         if (!user) return res.status(400).send({ message: "Invalid token" });
         return res.status(201).send(user);
 
-    } catch (err) { 
+    } catch (err) {
         return res.status(500).send({ message: err.message });
     }
 });
@@ -94,9 +93,7 @@ router.get("/reset-password",
         try {
             const result = validationResult(req);
             if (!result.isEmpty()) return res.status(400).send({ message: result.array()[0].msg });
-            res.send(resetPasswordPage({
-                link: `${config.App.baseUrl}/api/${config.VERSION}/auth/reset-password?token=${req.query.token}`
-            }))
+            res.send(`Click this link to reset your password: <a href="${config.App.baseUrl}/api/${config.VERSION}/auth/reset-password?token=${req.query.token}">Reset password</a>`)
         } catch (err) {
             return res.status(500).send({ message: err.message });
         }

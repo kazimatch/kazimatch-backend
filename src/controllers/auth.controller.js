@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import { UserService, QueueService } from "../services/index.js";
 import { hashPassword, jwtToken, verifyToken } from "../utils/crypt.js";
-import { register } from "../utils/template.js";
 import { config } from "../config/config.js";
 export class AuthController {
     constructor() {
@@ -51,12 +50,7 @@ export class AuthController {
         QueueService.queue("email", {
             to: user.email,
             subject: "Verify your email",
-            html: register(
-                {
-                    name: user.fullname,
-                    link: `${config.App.baseUrl}/api/${config.VERSION}/auth/verify?token=${token}`
-                }
-            )
+            html: '<>Hello Brian</>'
         });
 
         user.token = token;
