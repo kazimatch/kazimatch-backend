@@ -1,0 +1,47 @@
+{
+  "name": "ros-auth",
+  "version": "0.1.20",
+  "description": "Ramani Online Server authentication module",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bryanbill/ros-auth.git"
+  },
+  "keywords": [
+    "Geofence",
+    "Authentication",
+    "Notification"
+  ],
+  "author": "Brian Omondi <brian.omondi@ramani.co.ke>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bryanbill/ros-auth/issues"
+  },
+  "homepage": "https://github.com/bryanbill/ros-auth#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bullmq": "^4.16.0",
+    "chalk": "^5.3.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.7",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "redis": "^4.6.10",
+    "sequelize": "^6.35.1"
+  },
+  "devDependencies": {
+    "ava": "^5.3.1",
+    "nodemon": "^3.0.1"
+  }
+}
