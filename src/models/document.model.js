@@ -1,5 +1,6 @@
 import { database } from "../config/index.js";
 import { DataTypes } from "sequelize";
+import { User } from "./user.model.js";
 
 export const Document = database.sequelize.define('Document', {
     id: {
@@ -18,8 +19,13 @@ export const Document = database.sequelize.define('Document', {
     },
     owner: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id'
+        }
     }
 }, {
     tableName: 'documents',
 });
+

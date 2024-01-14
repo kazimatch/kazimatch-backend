@@ -1,5 +1,6 @@
 import { database } from "../config/index.js";
 import { DataTypes } from "sequelize";
+import { User } from "./user.model.js";
 
 export const Language = database.sequelize.define('Language', {
     id: {
@@ -19,8 +20,17 @@ export const Language = database.sequelize.define('Language', {
     },
     applicantId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id'
+        }
     }
 }, {
     tableName: 'languages',
 });
+
+Language.belongsTo(User, {
+    foreignKey: 'id',
+    as: 'applicant'
+})

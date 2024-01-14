@@ -1,5 +1,6 @@
 import { database } from "../config/index.js";
 import { DataTypes } from "sequelize";
+import { User } from "./user.model.js";
 
 export const Experience = database.sequelize.define('Experience', {
     id: {
@@ -30,8 +31,17 @@ export const Experience = database.sequelize.define('Experience', {
     },
     applicantId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id'
+        }
     }
 }, {
     tableName: 'experiences',
 });
+
+Experience.belongsTo(User, {
+    foreignKey: 'id',
+    as: 'applicant'
+})

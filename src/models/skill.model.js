@@ -1,8 +1,6 @@
 import { database } from "../config/index.js";
 import { DataTypes } from "sequelize";
 
-
-
 export const Skill = database.sequelize.define('Skill', {
     id: {
         type: DataTypes.INTEGER,
@@ -20,8 +18,13 @@ export const Skill = database.sequelize.define('Skill', {
     },
     applicantId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id'
+        }
     }
 }, {
     tableName: 'skills',
 });
+

@@ -20,16 +20,16 @@ const authMiddleware = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, config.JWT_SECRET);
         const user = await new UserService().getById(decoded.id);
-        
+
         if (!user.refreshToken) {
             return res.status(401).send({
                 message: "Unauthorized - Session Logged Out"
             });
         }
-
         req.user = user;
         next();
     } catch (error) {
+        console.log(error);
         return res.status(401).send({
             message: "Unauthorized - Session Expired"
         });

@@ -1,5 +1,6 @@
 import { database } from "../config/index.js";
 import { DataTypes } from "sequelize";
+import { User } from "./user.model.js";
 
 export const Notification = database.sequelize.define('Notification', {
     id: {
@@ -12,9 +13,13 @@ export const Notification = database.sequelize.define('Notification', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    userId: {
+    recipient: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: User,
+            key: 'id'
+        }
     },
     status: {
         type: DataTypes.STRING,
@@ -25,3 +30,8 @@ export const Notification = database.sequelize.define('Notification', {
 }, {
     tableName: 'notifications'
 });
+
+Notification.belongsTo(User, {
+    foreignKey: 'id',
+    as: 'user'
+})

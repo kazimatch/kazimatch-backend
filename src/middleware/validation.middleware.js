@@ -69,9 +69,9 @@ const registerSchema = checkSchema({
         toLowerCase: true,
         custom: {
             options: (value, { req }) => {
-                if (!["applicant", "employer"].includes(value)) {
-                    throw new Error("Invalid role");
-                }
+                // if (!["applicant", "employer"].includes(value)) {
+                //     throw new Error("Invalid role");
+                // }
                 return true;
             },
         }

@@ -8,7 +8,7 @@ const userController = new UserController();
 
 // -------------- Admin User Routes -------------- //
 
-router.get("/", authMiddleware, adminMiddleware, async (_, res) => {
+router.get("/admin/", authMiddleware, adminMiddleware, async (_, res) => {
     try {
         const users = await userController.getAllUsers();
         return res.status(200).send(users);
@@ -17,20 +17,20 @@ router.get("/", authMiddleware, adminMiddleware, async (_, res) => {
     }
 });
 
-router.get("/:id", authMiddleware, adminMiddleware, async (req, res) => {
+router.get("/admin/:id", authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const user = await userController.getUser(parseInt(req.params.id));
         if (!user) return res.status(404).send({ message: "User not found" });
-        
+
         return res.status(200).send(user);
     } catch (error) {
         return res.status(500).send({ message: error.message });
     }
 });
 
-router.patch("/:id", authMiddleware, adminMiddleware, async (req, res) => {
+router.patch("/admin/:id", authMiddleware, adminMiddleware, async (req, res) => {
     try {
-        const result = await userController.updateUser(req.params.id, req.body);
+        const result = await userController.updateUser(req.params.id, req.body, true);
         if (!result) return res.status(400).send({ message: "Couldn't update the resource" });
         return res.status(200).send({ message: "Resource updated successfully" });
     } catch (error) {
@@ -38,9 +38,10 @@ router.patch("/:id", authMiddleware, adminMiddleware, async (req, res) => {
     }
 });
 
-router.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {
+router.delete("/admin/:id", authMiddleware, adminMiddleware, async (req, res) => {
     try {
         const result = await userController.deleteUser(req.params.id);
+        if (!result) return res.status(400).send({ message: "Couldn't delete the resource" })
         return res.status(200).send({ deleted: result });
     } catch (error) {
         return res.status(500).send({ message: error.message });
@@ -99,7 +100,7 @@ router.post("/me/skills",
             exists: true,
             errorMessage: "Name is required",
         },
-        level: {
+        experience: {
             in: ["body"],
             isString: true,
             exists: true,
@@ -119,35 +120,7 @@ router.post("/me/skills",
 );
 
 router.patch("/me/skills/:id",
-    checkSchema({
-        name: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Name is required",
-        },
-        level: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Level is required",
-            toInt: true,
-        },
-        id: {
-            in: ["params"],
-            isString: true,
-            exists: true,
-            errorMessage: "Id is required",
-            custom: {
-                options: async (value) => {
-                    const skill = await userController.getUserSkill(value);
-                    if (!skill) return Promise.reject("Skill not found");
-                    return Promise.resolve();
-                },
-            },
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.updateUserSkill(req.user.id, req.params.id, req.body);
             if (!result) return res.status(400).send({ message: "Couldn't update the resource" });
@@ -159,24 +132,11 @@ router.patch("/me/skills/:id",
 );
 
 router.delete("/me/skills/:id",
-    checkSchema({
-        id: {
-            in: ["params"],
-            isString: true,
-            exists: true,
-            errorMessage: "Id is required",
-            custom: {
-                options: async (value) => {
-                    const skill = await userController.getUserSkill(value);
-                    if (!skill) return Promise.reject("Skill not found");
-                    return Promise.resolve();
-                },
-            },
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.deleteUserSkill(req.user.id, req.params.id);
+            if (!result) return res.status(400).send({ message: "Couldn't delete the resource" });
+
             return res.status(200).send({ deleted: result });
         } catch (error) {
             return res.status(500).send({ message: error.message });
@@ -188,7 +148,7 @@ router.delete("/me/skills/:id",
 
 router.get("/me/education", authMiddleware, async (req, res) => {
     try {
-        const education = await userController.getUserEducation(req.user.id);
+        const education = await userController.getUserEducations(req.user.id);
         return res.status(200).send(education);
     } catch (error) {
         return res.status(500).send({ message: error.message });
@@ -196,41 +156,7 @@ router.get("/me/education", authMiddleware, async (req, res) => {
 });
 
 router.post("/me/education",
-    checkSchema({
-        school: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Institution is required",
-        },
-        field: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Degree is required",
-        },
-        start: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Start date is required",
-            toDate: true,
-        },
-        end: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "End date is required",
-            toDate: true,
-        },
-        description: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Description is required",
-        }
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.addUserEducation(req.user.id, req.body);
             if (!result) return res.status(400).send({ message: "Couldn't create the resource" });
@@ -242,54 +168,7 @@ router.post("/me/education",
 );
 
 router.patch("/me/education/:id",
-    checkSchema({
-        school: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Institution is required",
-        },
-        field: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Degree is required",
-        },
-        start: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Start date is required",
-            toDate: true,
-        },
-        end: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "End date is required",
-            toDate: true,
-        },
-        description: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Description is required",
-        },
-        id: {
-            in: ["params"],
-            isString: true,
-            exists: true,
-            errorMessage: "Id is required",
-            custom: {
-                options: async (value) => {
-                    const education = await userController.getUserEducation(value);
-                    if (!education) return Promise.reject("Education not found");
-                    return Promise.resolve();
-                },
-            },
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.updateUserEducation(req.user.id, req.params.id, req.body);
             if (!result) return res.status(400).send({ message: "Couldn't update the resource" });
@@ -301,22 +180,7 @@ router.patch("/me/education/:id",
 );
 
 router.delete("/me/education/:id",
-    checkSchema({
-        id: {
-            in: ["params"],
-            isString: true,
-            exists: true,
-            errorMessage: "Id is required",
-            custom: {
-                options: async (value) => {
-                    const education = await userController.getUserEducation(value);
-                    if (!education) return Promise.reject("Education not found");
-                    return Promise.resolve();
-                },
-            },
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.deleteUserEducation(req.user.id, req.params.id);
             return res.status(200).send({ deleted: result });
@@ -330,7 +194,7 @@ router.delete("/me/education/:id",
 
 router.get("/me/experience", authMiddleware, async (req, res) => {
     try {
-        const experience = await userController.getUserExperience(req.user.id);
+        const experience = await userController.getUserExperiences(req.user.id);
         return res.status(200).send(experience);
     } catch (err) {
         return res.status(500).send({ message: err.message });
@@ -338,41 +202,7 @@ router.get("/me/experience", authMiddleware, async (req, res) => {
 });
 
 router.post("/me/experience",
-    checkSchema({
-        company: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Company is required",
-        },
-        position: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Position is required",
-        },
-        start: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Start date is required",
-            toDate: true,
-        },
-        end: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "End date is required",
-            toDate: true,
-        },
-        description: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Description is required",
-        }
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.addUserExperience(req.user.id, req.body);
             if (!result) return res.status(400).send({ message: "Couldn't create the resource" });
@@ -384,54 +214,7 @@ router.post("/me/experience",
 );
 
 router.patch("/me/experience/:id",
-    checkSchema({
-        company: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Company is required",
-        },
-        position: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Position is required",
-        },
-        start: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Start date is required",
-            toDate: true,
-        },
-        end: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "End date is required",
-            toDate: true,
-        },
-        description: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Description is required",
-        },
-        id: {
-            in: ["params"],
-            isString: true,
-            exists: true,
-            errorMessage: "Id is required",
-            custom: {
-                options: async (value) => {
-                    const experience = await userController.getUserExperience(value);
-                    if (!experience) return Promise.reject("Experience not found");
-                    return Promise.resolve();
-                },
-            },
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.updateUserExperience(req.user.id, req.params.id, req.body);
             if (!result) return res.status(400).send({ message: "Couldn't update the resource" });
@@ -443,22 +226,7 @@ router.patch("/me/experience/:id",
 );
 
 router.delete("/me/experience/:id",
-    checkSchema({
-        id: {
-            in: ["params"],
-            isString: true,
-            exists: true,
-            errorMessage: "Id is required",
-            custom: {
-                options: async (value) => {
-                    const experience = await userController.getUserExperience(value);
-                    if (!experience) return Promise.reject("Experience not found");
-                    return Promise.resolve();
-                },
-            },
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.deleteUserExperience(req.user.id, req.params.id);
             return res.status(200).send({ deleted: result });
@@ -480,22 +248,7 @@ router.get("/me/languages", authMiddleware, async (req, res) => {
 });
 
 router.post("/me/languages",
-    checkSchema({
-        name: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Name is required",
-        },
-        level: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Level is required",
-            toInt: true,
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.addUserLanguage(req.user.id, req.body);
             if (!result) return res.status(400).send({ message: "Couldn't create the resource" });
@@ -507,35 +260,7 @@ router.post("/me/languages",
 );
 
 router.patch("/me/languages/:id",
-    checkSchema({
-        name: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Name is required",
-        },
-        level: {
-            in: ["body"],
-            isString: true,
-            exists: true,
-            errorMessage: "Level is required",
-            toInt: true,
-        },
-        id: {
-            in: ["params"],
-            isString: true,
-            exists: true,
-            errorMessage: "Id is required",
-            custom: {
-                options: async (value) => {
-                    const language = await userController.getUserLanguage(value);
-                    if (!language) return Promise.reject("Language not found");
-                    return Promise.resolve();
-                },
-            },
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.updateUserLanguage(req.user.id, req.params.id, req.body);
             if (!result) return res.status(400).send({ message: "Couldn't update the resource" });
@@ -547,24 +272,55 @@ router.patch("/me/languages/:id",
 );
 
 router.delete("/me/languages/:id",
-    checkSchema({
-        id: {
-            in: ["params"],
-            isString: true,
-            exists: true,
-            errorMessage: "Id is required",
-            custom: {
-                options: async (value) => {
-                    const language = await userController.getUserLanguage(value);
-                    if (!language) return Promise.reject("Language not found");
-                    return Promise.resolve();
-                },
-            },
-        },
-    })
-    , authMiddleware, async (req, res) => {
+    authMiddleware, async (req, res) => {
         try {
             const result = await userController.deleteUserLanguage(req.user.id, req.params.id);
+            return res.status(200).send({ deleted: result });
+        } catch (error) {
+            return res.status(500).send({ message: error.message });
+        }
+    }
+);
+
+// 6. Documents
+
+router.get("/me/documents", authMiddleware, async (req, res) => {
+    try {
+        const documents = await userController.getUserDocuments(req.user.id);
+        return res.status(200).send(documents);
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+});
+
+router.post("/me/documents",
+    authMiddleware, async (req, res) => {
+        try {
+            const result = await userController.addUserDocument(req.user.id, req.body);
+            if (!result) return res.status(400).send({ message: "Couldn't create the resource" });
+            return res.status(201).send({ message: "Resource created successfully" });
+        } catch (error) {
+            return res.status(500).send({ message: error.message });
+        }
+    }
+);
+
+router.patch("/me/documents/:id",
+    authMiddleware, async (req, res) => {
+        try {
+            const result = await userController.updateUserDocument(req.user.id, req.params.id, req.body);
+            if (!result) return res.status(400).send({ message: "Couldn't update the resource" });
+            return res.status(200).send({ message: "Resource updated successfully" });
+        } catch (error) {
+            return res.status(500).send({ message: error.message });
+        }
+    }
+);
+
+router.delete("/me/documents/:id",
+    authMiddleware, async (req, res) => {
+        try {
+            const result = await userController.deleteUserDocument(req.user.id, req.params.id);
             return res.status(200).send({ deleted: result });
         } catch (error) {
             return res.status(500).send({ message: error.message });

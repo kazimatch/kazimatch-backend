@@ -1,4 +1,4 @@
-import { User } from "../models/index.js";
+import { User, Document, Language, Skill, Education, Experience } from "../models/index.js";
 
 export class UserService {
     constructor() {
@@ -19,7 +19,30 @@ export class UserService {
      * @returns {Promise<object>}
      */
     async getById(id) {
-        const user = await this.user.findByPk(id);
+        const user = await this.user.findByPk(id, {
+            include: [
+                {
+                    model: Education,
+                    as: "educations"
+                },
+                {
+                    model: Skill,
+                    as: "skills"
+                },
+                {
+                    model: Experience,
+                    as:'experiences'
+                },
+                {
+                    model: Document,
+                    as: 'documents'
+                },
+                {
+                    model: Language,
+                    as: 'languages'
+                }
+            ]
+        });
         return user?.dataValues;
     }
     /**

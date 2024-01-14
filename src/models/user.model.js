@@ -1,6 +1,6 @@
 import { database } from "../config/index.js";
 import { DataTypes } from "sequelize";
-import { Skill } from "./skill.model.js";
+import { Experience, Document, Language, Education, Notification } from "./index.js";
 
 export const User = database.sequelize.define('User', {
     id: {
@@ -71,3 +71,4 @@ export const User = database.sequelize.define('User', {
     tableName: 'users',
     paranoid: true,
 });
+
