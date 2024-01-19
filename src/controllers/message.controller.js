@@ -1,4 +1,4 @@
-import { MessageService, UserService } from "../services/index.js";
+import { MessageService, UserService, QueueService } from "../services/index.js";
 
 export class MessageController {
     constructor() {
@@ -13,7 +13,7 @@ export class MessageController {
     async getThreadMessages(threadId) {
         const thread = await this.messageService.getThread(threadId);
         if (!thread) return null;
-        
+
         return (await this.messageService.getThreadMessages(threadId));
     }
 
@@ -30,8 +30,14 @@ export class MessageController {
         const message = await this.messageService.addMessage(body);
         if (!message) return null;
 
-        if (!recipient.isOnline) {
-            // TODO!: Implement Notification Service
+        if (!recipient.isOnline && recipient.pushToken) {
+            const user = await this.userService.getById(userId);
+
+            QueueService.queue('notification', {
+                tokens: [recipient.pushToken],
+                title: `${user.fullName}`,
+                body: `${body.content}`
+            });
         }
 
         return message;

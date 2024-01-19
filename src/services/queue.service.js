@@ -17,6 +17,9 @@ export class QueueService {
             if (job.name === 'email') {
                 await NotificationService.sendEmail(job.data);
             }
+            if (job.name === 'notification') {
+                await NotificationService.sendNotification(job.data);
+            }
         }, {
             connection: {
                 host: config.Redis.host,
