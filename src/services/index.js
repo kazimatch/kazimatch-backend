@@ -10,3 +10,4 @@ export { JobService } from "./job.service.js";
 export { MessageService } from "./message.service.js";
 export { RealtimeService } from "./realtime.service.js";
 export { FeedbackService } from "./feedback.service.js";
+export { CronService } from "./cron.service.js";

@@ -21,9 +21,14 @@ export const Notification = database.sequelize.define('Notification', {
             key: 'id'
         }
     },
-    status: {
+    type: {
         type: DataTypes.STRING,
-        values: ['delivered', 'pending', 'failed'],
+        values: ['email', 'notification', "feedback"],
+        allowNull: false,
+        defaultValue: 'notification'
+    },
+    read: {
+        type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
     }
