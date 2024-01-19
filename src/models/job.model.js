@@ -63,6 +63,16 @@ export const Job = database.sequelize.define('Job', {
         values: ["accepting", "withheld", "not-accepting"],
         defaultValue: "accepting",
         allowNull: false
+    },
+    experience: {
+        type: DataTypes.STRING,
+        values: ['entry', 'intermediate', 'senior'],
+        allowNull: false
+    },
+    hasFeedback: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
     }
 }, {
     tableName: 'jobs',
