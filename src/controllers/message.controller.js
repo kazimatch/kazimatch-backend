@@ -11,6 +11,9 @@ export class MessageController {
     }
 
     async getThreadMessages(threadId) {
+        const thread = await this.messageService.getThread(threadId);
+        if (!thread) return null;
+        
         return (await this.messageService.getThreadMessages(threadId));
     }
 
@@ -36,5 +39,9 @@ export class MessageController {
 
     async deleteMessage(userId, id) {
         return (await this.messageService.deleteMessage(userId, id));
+    }
+
+    async deleteThread(threadId, userId) {
+        return (await this.messageService.deleteThread(userId, threadId));
     }
 }
