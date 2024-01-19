@@ -32,7 +32,12 @@ const init = async () => {
         const io = new Server(server, {
             cors: {
                 origin: '*',
-            }
+            },
+            connectionStateRecovery: {
+                maxDisconnectionDuration: 2 * 60 * 1000,
+                skipMiddlewares: true,
+            },
+            
         });
 
         new RealtimeService(io);

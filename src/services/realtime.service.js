@@ -14,7 +14,6 @@ export class RealtimeService {
         this.userController = new UserController(io);
 
         this.io.on('connection', (socket) => {
-
             this.messages(socket);
             this.user(socket);
         });
