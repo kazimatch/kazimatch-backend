@@ -1,15 +1,10 @@
-import { Server } from "socket.io";
+
 import { MessageService, UserService, QueueService } from "../services/index.js";
 
 export class MessageController {
-    /**
-     * 
-     * @param {Server} io 
-     */
-    constructor(io = null) {
+    constructor() {
         this.messageService = new MessageService();
         this.userService = new UserService();
-        this.io = io;
     }
 
     async getUserThreads(userId) {
@@ -60,24 +55,4 @@ export class MessageController {
         return (await this.messageService.deleteThread(userId, threadId));
     }
 
-    realtime() {
-        this.io.on('connection', (socket) => {
-            socket.on('message', async (data) => {
-                const message = await this.addMessage(data.from, {
-                    content: data.content,
-                    to: data.to
-                },);
-                if (!message) return;
-
-                this.io.emit('message', message);
-            });
-
-            socket.on('delete-message', async (data) => {
-                const message = await this.deleteMessage(data.userId, data.messageId);
-                if (!message) return;
-
-                this.io.emit('delete-message', message);
-            });
-        });
-    }
 }
