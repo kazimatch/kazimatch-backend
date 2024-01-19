@@ -26,9 +26,8 @@ export const Thread = database.sequelize.define('Thread', {
         }
     },
     lastMessage: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
+        type: DataTypes.STRING,
+        allowNull: false
     },
     lastMessageDate: {
         type: DataTypes.DATE,
