@@ -51,8 +51,29 @@ const adminMiddleware = (req, res, next) => {
     next();
 }
 
+/**
+ * Ensures that the user has recruiter or admin privileges.
+ * @param {e.Request} req 
+ * @param {e.Response} res 
+ * @param {e.NextFunction} next 
+ * @returns 
+ */
+const recruiterMiddleware = (req, res, next) => {
+    const role = req.user.role;
+    if (role === 'admin' || role == 'recruiter') {
+        next()
+        return;
+    }
+
+    return res.status(403).send({
+        message: "Forbidden",
+    });
+}
+
+
 
 export {
     authMiddleware,
-    adminMiddleware
+    adminMiddleware,
+    recruiterMiddleware
 };

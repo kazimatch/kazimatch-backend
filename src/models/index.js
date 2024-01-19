@@ -5,6 +5,8 @@ import { Experience } from "./experience.model.js";
 import { Skill } from "./skill.model.js";
 import { Language } from "./language.model.js";
 import { Document } from "./document.model.js";
+import { Job } from "./job.model.js";
+import { Application } from "./application.model.js";
 
 Document.belongsTo(User, {
     foreignKey: 'id',
@@ -52,6 +54,39 @@ User.hasMany(Notification, {
     onDelete: 'CASCADE'
 })
 
+User.hasMany(Job, {
+    foreignKey: 'owner',
+    as: 'jobs',
+    onDelete: 'CASCADE'
+});
+
+User.hasMany(Application, {
+    foreignKey: 'applicant',
+    as: 'applications',
+    onDelete: 'CASCADE'
+})
+
+Job.hasMany(Application, {
+    foreignKey: "job",
+    as: "applications",
+    onDelete: 'CASCADE'
+})
+
+Job.hasOne(User, {
+    foreignKey: "id",
+    as: 'user'
+})
+
+Application.hasOne(User, {
+    foreignKey: "id",
+    as: "user",
+})
+
+Application.hasOne(Job, {
+    foreignKey: "id",
+    as: "Job"
+})
+
 export {
     User,
     Notification,
@@ -59,5 +94,7 @@ export {
     Experience,
     Skill,
     Language,
-    Document
+    Document,
+    Job,
+    Application
 }
