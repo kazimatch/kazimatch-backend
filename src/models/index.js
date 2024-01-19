@@ -9,6 +9,7 @@ import { Job } from "./job.model.js";
 import { Application } from "./application.model.js";
 import { Thread } from "./thread.model.js";
 import { Message } from "./message.model.js";
+import { Feedback } from "./feedback.model.js";
 
 Document.belongsTo(User, {
     foreignKey: 'id',
@@ -120,6 +121,16 @@ Message.belongsTo(Thread, {
     as: 'thread'
 })
 
+Feedback.belongsTo(User, {
+    foreignKey: 'employerId',
+    as: 'employer'
+})
+
+Feedback.belongsTo(User, {
+    foreignKey: 'applicantId',
+    as: 'applicant'
+})
+
 export {
     User,
     Notification,
@@ -131,5 +142,6 @@ export {
     Job,
     Application,
     Message,
-    Thread
+    Thread,
+    Feedback
 }

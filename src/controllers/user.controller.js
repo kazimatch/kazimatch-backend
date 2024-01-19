@@ -1,13 +1,19 @@
+import { Server } from "socket.io";
 import { User } from "../models/index.js";
 import { UserService, EducationService, SkillsService, LanguageService, ExperienceService, DocumentService } from "../services/index.js";
 export class UserController {
-    constructor() {
+    /**
+     * 
+     * @param {Server} io 
+     */
+    constructor(io = null) {
         this.userService = new UserService();
         this.educationService = new EducationService();
         this.skillService = new SkillsService()
         this.languageService = new LanguageService();
         this.experienceService = new ExperienceService();
         this.documentService = new DocumentService();
+        this.io = io;
     }
 
     /**
@@ -301,6 +307,41 @@ export class UserController {
 
     async deleteUserDocument(userId, documentId) {
         return (await this.documentService.deleteDocument(userId, documentId));
+    }
+
+    /**
+     * 
+     * @param {Server} io 
+     */
+    realtime(){
+        this.io.on('connection', (socket) => {
+            socket.on('user', async (data) => {
+                const user = await this.getUser(data.userId);
+                if (!user) return;
+
+                if (data.isOnline) {
+                    await this.userService.update(data.userId, { isOnline: true });
+                }
+
+                socket.join(data.userId);
+                socket.broadcast.emit('user', {
+                    userId: data.userId,
+                    isOnline: data.isOnline
+                })
+            })
+
+            socket.on('disconnect', async () => {
+                const user = await this.getUser(data.userId);
+                if (!user) return;
+
+                await this.userService.update(data.userId, { isOnline: false });
+
+                socket.broadcast.emit('user', {
+                    userId: data.userId,
+                    isOnline: false
+                })
+            })
+        })
     }
 
 }

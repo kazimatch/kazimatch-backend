@@ -8,3 +8,4 @@ export { ExperienceService } from "./experience.service.js";
 export { DocumentService } from "./documents.service.js";
 export { JobService } from "./job.service.js";
 export { MessageService } from "./message.service.js";
+export { RealtimeService } from "./realtime.service.js";

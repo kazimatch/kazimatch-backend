@@ -11,7 +11,7 @@ export class Database {
     async connect() {
         try {
             await this.sequelize.authenticate({
-                
+
             })
             console.log(chalk.green('Connection has been established successfully.'));
             return this;
@@ -22,7 +22,7 @@ export class Database {
 
     async sync(force = false) {
         try {
-            await this.sequelize.sync({ force })
+            await this.sequelize.sync({ force, logging: false })
             console.log(chalk.green('All models were synchronized successfully.'));
             return this;
         } catch (error) {

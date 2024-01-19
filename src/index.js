@@ -6,6 +6,8 @@ import chalk from "chalk";
 import { config, database } from "./config/index.js";
 import router from "./routes/index.js";
 import { QueueService } from "./services/index.js";
+import { Server } from "socket.io";
+import { RealtimeService } from "./services/index.js";
 
 const init = async () => {
     var db;
@@ -23,9 +25,18 @@ const init = async () => {
         config.ENV === 'development' ? app.use(morgan('dev')) : null;
         app.use(`/api/${config.VERSION}`, router);
 
-        app.listen(config.PORT, () => {
+        const server = app.listen(config.PORT, () => {
             console.log("Server running on PORT", config.PORT)
         })
+
+        const io = new Server(server, {
+            cors: {
+                origin: '*',
+            }
+        });
+
+        new RealtimeService(io);
+
     } catch (err) {
         console.log(chalk.red("Error on init", err))
         await db.close();
