@@ -2,6 +2,7 @@ import Mail from "nodemailer/lib/mailer/index.js";
 import { config } from "../config/index.js";
 import { createTransport } from "nodemailer";
 import Pushy from "pushy";
+import { Notification } from "../models/index.js";
 export class NotificationService {
     static transporter = createTransport({
         host: config.SMTP.host,
@@ -26,17 +27,28 @@ export class NotificationService {
         const { tokens, title, body } = data;
         await this.pushy.sendPushNotification({
             message: body
-        }, tokens,{
+        }, tokens, {
             notification: {
                 title,
                 body
             }
-        }, (err, id)=>{
-            if(err){
+        }, (err, id) => {
+            if (err) {
                 throw err;
             }
             console.log(id);
         });
     }
 
+    async addNotification(body) {
+        return await Notification.create(body);
+    }
+
+    async getNotifications(userId) {
+        return await Notification.findAll({
+            where: {
+                recipient: userId
+            }
+        });
+    }
 }
