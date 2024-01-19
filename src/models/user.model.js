@@ -72,6 +72,10 @@ export const User = database.sequelize.define('User', {
         allowNull: false,
         defaultValue: false
     },
+    pushToken: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
 }, {
     tableName: 'users',
     paranoid: true,
