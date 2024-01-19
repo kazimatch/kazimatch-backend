@@ -7,6 +7,8 @@ import { Language } from "./language.model.js";
 import { Document } from "./document.model.js";
 import { Job } from "./job.model.js";
 import { Application } from "./application.model.js";
+import { Thread } from "./thread.model.js";
+import { Message } from "./message.model.js";
 
 Document.belongsTo(User, {
     foreignKey: 'id',
@@ -77,14 +79,29 @@ Job.hasOne(User, {
     as: 'user'
 })
 
-Application.hasOne(User, {
+Application.belongsTo(User, {
     foreignKey: "id",
     as: "user",
 })
 
-Application.hasOne(Job, {
+Application.belongsTo(Job, {
     foreignKey: "id",
-    as: "Job"
+    as: "source"
+})
+
+Thread.belongsTo(User, {
+    foreignKey: 'partyA',
+    as: 'userA'
+})
+
+Thread.belongsTo(User, {
+    foreignKey: 'partyB',
+    as: 'userB'
+})
+
+Message.belongsTo(User, {
+    foreignKey: 'to',
+    as: 'recipient'
 })
 
 export {
@@ -96,5 +113,7 @@ export {
     Language,
     Document,
     Job,
-    Application
+    Application,
+    Message,
+    Thread
 }

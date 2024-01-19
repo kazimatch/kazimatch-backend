@@ -7,3 +7,4 @@ export { LanguageService } from "./language.service.js";
 export { ExperienceService } from "./experience.service.js";
 export { DocumentService } from "./documents.service.js";
 export { JobService } from "./job.service.js";
+export { MessageService } from "./message.service.js";
