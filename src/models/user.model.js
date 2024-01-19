@@ -66,7 +66,12 @@ export const User = database.sequelize.define('User', {
     dob: {
         type: DataTypes.DATEONLY,
         allowNull: true
-    }
+    },
+    isOnline: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
 }, {
     tableName: 'users',
     paranoid: true,
