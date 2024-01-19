@@ -99,9 +99,25 @@ Thread.belongsTo(User, {
     as: 'userB'
 })
 
+Thread.hasMany(Message, {
+    foreignKey: 'threadId',
+    as: 'messages',
+    onDelete: 'CASCADE'
+})
+
 Message.belongsTo(User, {
     foreignKey: 'to',
     as: 'recipient'
+})
+
+Message.belongsTo(User, {
+    foreignKey: 'from',
+    as: 'sender'
+})
+
+Message.belongsTo(Thread, {
+    foreignKey: 'threadId',
+    as: 'thread'
 })
 
 export {

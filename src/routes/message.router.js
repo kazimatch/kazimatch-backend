@@ -16,9 +16,11 @@ router.get('/', authMiddleware, async (req, res) => {
     }
 });
 
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id/thread', authMiddleware, async (req, res) => {
     try {
         const messages = await messageController.getThreadMessages(req.params.id);
+        if(!messages) return res.status(404).json({ message: 'Thread not found' });
+        
         res.json(messages);
     } catch (err) {
         console.log(err);
@@ -40,6 +42,16 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     try {
         const message = await messageController.deleteMessage(req.user.id, req.params.id);
         res.json(message);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Something went wrong' })
+    }
+});
+
+router.delete('/:id/thread', authMiddleware, async (req, res) => {
+    try {
+        const messages = await messageController.deleteThread(req.params.id, req.user.id);
+        res.json(messages);
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: 'Something went wrong' })
