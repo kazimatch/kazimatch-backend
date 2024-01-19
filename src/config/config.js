@@ -36,6 +36,9 @@ const config = {
     App: {
         baseUrl: process.env.APP_URL
     },
+    Pushy: {
+        key: process.env.PUSHY_KEY
+    },
 };
 
 export {
