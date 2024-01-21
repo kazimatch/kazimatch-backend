@@ -7,7 +7,7 @@ import { config, database } from "./config/index.js";
 import router from "./routes/index.js";
 import { QueueService } from "./services/index.js";
 import { Server } from "socket.io";
-import { RealtimeService } from "./services/index.js";
+import { RealtimeService, CronService } from "./services/index.js";
 
 const init = async () => {
     var db;
@@ -37,11 +37,10 @@ const init = async () => {
                 maxDisconnectionDuration: 2 * 60 * 1000,
                 skipMiddlewares: true,
             },
-            
+
         });
 
         new RealtimeService(io);
-
     } catch (err) {
         console.log(chalk.red("Error on init", err))
         await db.close();

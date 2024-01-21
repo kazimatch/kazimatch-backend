@@ -67,7 +67,8 @@ export const Job = database.sequelize.define('Job', {
     experience: {
         type: DataTypes.STRING,
         values: ['entry', 'intermediate', 'senior'],
-        allowNull: false
+        allowNull: false,
+        defaultValue: 'entry'
     },
     hasFeedback: {
         type: DataTypes.BOOLEAN,

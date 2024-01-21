@@ -6,6 +6,9 @@ import chalk from "chalk";
 /**
  * All these tasks will run every minute in the background as a cron job
  * To add a new task, create a new function and add it to the cron job scheduler
+ * 
+ * They shouldnt be run on the same thread as the server because they are blocking
+ * and will slow down the server
  */
 
 /**

@@ -80,7 +80,7 @@ Job.hasOne(User, {
     as: 'user'
 })
 
-Application.belongsTo(User, {
+Application.hasOne(User, {
     foreignKey: "id",
     as: "user",
 })
@@ -90,12 +90,12 @@ Application.belongsTo(Job, {
     as: "source"
 })
 
-Thread.belongsTo(User, {
+Thread.hasOne(User, {
     foreignKey: 'partyA',
     as: 'userA'
 })
 
-Thread.belongsTo(User, {
+Thread.hasOne(User, {
     foreignKey: 'partyB',
     as: 'userB'
 })
@@ -106,28 +106,33 @@ Thread.hasMany(Message, {
     onDelete: 'CASCADE'
 })
 
-Message.belongsTo(User, {
+Message.hasOne(User, {
     foreignKey: 'to',
     as: 'recipient'
 })
 
-Message.belongsTo(User, {
+Message.hasOne(User, {
     foreignKey: 'from',
     as: 'sender'
 })
 
-Message.belongsTo(Thread, {
+Message.hasOne(Thread, {
     foreignKey: 'threadId',
     as: 'thread'
 })
 
-Feedback.belongsTo(User, {
+Feedback.hasOne(User, {
     foreignKey: 'employerId',
     as: 'employer'
 })
 
-Feedback.belongsTo(User, {
+Feedback.hasOne(User, {
     foreignKey: 'applicantId',
+    as: 'applicant'
+})
+
+Language.hasOne(User, {
+    foreignKey: 'id',
     as: 'applicant'
 })
 
