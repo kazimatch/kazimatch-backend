@@ -2,17 +2,22 @@ import { QueueService } from "./index.js";
 import cron from "node-cron";
 export class CronService {
     constructor() {
-        this.scheduler("* * * * *");
+        this.tasks = [];
     }
 
     /**
-     * 
-     * @param {string} period 
+     * @param {Function} task
      */
-    scheduler(period) {
-        cron.schedule(period, async () => {
-            QueueService.queue("feedback", {});
-            QueueService.queue("subscription", {});
+    addTask(task) {
+        this.tasks.push(task);
+        return this;
+    }
+
+    async schedule() {
+        cron.schedule('* * * * *', async () => {
+            this.tasks.forEach(async (task) => {
+                await task();
+            });
         });
     }
 }
