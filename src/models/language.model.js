@@ -30,7 +30,3 @@ export const Language = database.sequelize.define('Language', {
     tableName: 'languages',
 });
 
-Language.belongsTo(User, {
-    foreignKey: 'id',
-    as: 'applicant'
-})
