@@ -23,8 +23,7 @@ const feedback = async () => {
                 end: {
                     [Op.lte]: Date.now()
                 },
-                status: "not-accepting",
-                hasFeedback: false
+                status: "not-accepting"
             },
             include: [
                 {
