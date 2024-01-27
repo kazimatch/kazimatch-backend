@@ -34,11 +34,18 @@ const config = {
     },
     SALT: process.env.SALT,
     App: {
-        baseUrl: process.env.APP_URL
+        baseUrl: process.env.NODE_ENV === "production" ? process.env.APP_URL : `http://localhost:${process.env.PORT}`,
     },
     Pushy: {
         key: process.env.PUSHY_KEY
     },
+    Mpesa: {
+        shortCode: process.env.MPESA_SHORT_CODE,
+        baseUrl: process.env.NODE_ENV === 'production' ? process.env.MPESA_BASE_URL_PROD : process.env.MPESA_BASE_URL_SANDBOX,
+        consumerKey: process.env.MPESA_CONSUMER_KEY,
+        consumerSecret: process.env.MPESA_CONSUMER_SECRET,
+        passKey: process.env.MPESA_PASS_KEY,
+    }
 };
 
 export {
