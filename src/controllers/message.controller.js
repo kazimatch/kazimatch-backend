@@ -1,4 +1,3 @@
-
 import { MessageService, UserService, QueueService } from "../services/index.js";
 
 export class MessageController {
@@ -41,9 +40,7 @@ export class MessageController {
                 body: `${body.content}`
             });
         }
-
         
-
         return message;
     }
 
