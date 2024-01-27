@@ -54,7 +54,7 @@ export class AuthController {
             html: emailTemplate({
                 name: user.fullName,
                 message: "Welcome to KaziMatch. Please verify your email address to continue",
-                link: `${config.App.baseUrl}/api/${config.VERSION}/auth/verify-email?token=${token}`,
+                link: `${config.App.baseUrl}/api/${config.VERSION}/auth/verify?token=${token}`,
                 type: "Verify",
                 sign: "If you did not create an account, DO NOT click this link"
             })
