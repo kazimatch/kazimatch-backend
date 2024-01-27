@@ -1,6 +1,6 @@
 import { configDotenv } from "dotenv";
 configDotenv({
-    path: `.env.development`
+    path: `.env`
 });
 
 const config = {
