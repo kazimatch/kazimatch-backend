@@ -7,7 +7,7 @@ import { config, database } from "./config/index.js";
 import router from "./routes/index.js";
 import { QueueService } from "./services/index.js";
 import { Server } from "socket.io";
-import { RealtimeService, CronService } from "./services/index.js";
+import { RealtimeService } from "./services/index.js";
 
 const init = async () => {
     var db;

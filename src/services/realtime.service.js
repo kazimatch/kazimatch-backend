@@ -10,8 +10,8 @@ export class RealtimeService {
      */
     constructor(io) {
         this.io = io;
-        this.messageController = new MessageController(io);
-        this.userController = new UserController(io);
+        this.messageController = new MessageController();
+        this.userController = new UserController();
 
         this.io.on('connection', (socket) => {
             this.messages(socket);
