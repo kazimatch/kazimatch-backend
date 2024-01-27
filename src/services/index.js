@@ -11,3 +11,5 @@ export { MessageService } from "./message.service.js";
 export { RealtimeService } from "./realtime.service.js";
 export { FeedbackService } from "./feedback.service.js";
 export { CronService } from "./cron.service.js";
+export { MpesaService } from "./mpesa.service.js";
+export { SubscriptionService } from "./subscription.service.js";

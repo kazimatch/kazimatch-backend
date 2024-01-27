@@ -1,5 +1,11 @@
 import { User, Document, Language, Skill, Education, Experience } from "../models/index.js";
 
+const attrs = {
+    attributes: {
+        exclude: ["password", 'refreshToken']
+    }
+}
+
 export class UserService {
     constructor() {
         this.user = User;
@@ -7,9 +13,7 @@ export class UserService {
 
     async getAll() {
         const users = await this.user.findAll({
-            attributes: {
-                exclude: ["password", 'refreshToken']
-            }
+            ...attrs,
         });
         return users.map(user => user.dataValues);
     }
@@ -20,6 +24,7 @@ export class UserService {
      */
     async getById(id) {
         const user = await this.user.findByPk(id, {
+
             include: [
                 {
                     model: Education,
@@ -31,16 +36,17 @@ export class UserService {
                 },
                 {
                     model: Experience,
-                    as:'experiences'
-                },
-                {
-                    model: Document,
-                    as: 'documents'
+                    as: "experiences"
                 },
                 {
                     model: Language,
-                    as: 'languages'
+                    as: "languages"
+                },
+                {
+                    model: Document,
+                    as: "documents"
                 }
+
             ]
         });
         return user?.dataValues;

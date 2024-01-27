@@ -14,7 +14,6 @@ export class QueueService {
     static init() {
         const worker = new Worker('queue', async (job) => {
             if (job.name === 'email') {
-                console.log(job.data)
                 await NotificationService.sendEmail(job.data);
             }
             if (job.name === 'notification') {
@@ -27,11 +26,11 @@ export class QueueService {
             }
         });
 
-        worker.on('completed', (job) => {
+        worker.on('completed', (_) => {
             console.log("Job completed")
         });
 
-        worker.on('failed', (job, err) => {
+        worker.on('failed', (_, err) => {
             console.log(chalk.red('Job failed', err));
         });
     }

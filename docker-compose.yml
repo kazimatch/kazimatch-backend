@@ -5,11 +5,11 @@ services:
     image: postgres:latest
     container_name: postgres
     environment:
-      POSTGRES_DB: ros-auth
-      POSTGRES_USER: ramani
-      POSTGRES_PASSWORD: pgR4mani
+      POSTGRES_DB: kazimatch
+      POSTGRES_USER: employer
+      POSTGRES_PASSWORD: Employer101!!
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
   

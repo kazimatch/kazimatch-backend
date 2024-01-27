@@ -25,7 +25,7 @@ export class FeedbackService {
             where: {
                 id
             }
-        })).dataValues;
+        }))?.dataValues;
     }
 
     async addFeedback(body){

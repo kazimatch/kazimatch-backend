@@ -6,49 +6,6 @@ import { body, checkSchema, param } from "express-validator";
 const router = Router();
 const userController = new UserController();
 
-// -------------- Admin User Routes -------------- //
-
-router.get("/admin/", authMiddleware, adminMiddleware, async (_, res) => {
-    try {
-        const users = await userController.getAllUsers();
-        return res.status(200).send(users);
-    } catch (error) {
-        return res.status(500).send({ message: error.message });
-    }
-});
-
-router.get("/admin/:id", authMiddleware, adminMiddleware, async (req, res) => {
-    try {
-        const user = await userController.getUser(parseInt(req.params.id));
-        if (!user) return res.status(404).send({ message: "User not found" });
-
-        return res.status(200).send(user);
-    } catch (error) {
-        return res.status(500).send({ message: error.message });
-    }
-});
-
-router.patch("/admin/:id", authMiddleware, adminMiddleware, async (req, res) => {
-    try {
-        const result = await userController.updateUser(req.params.id, req.body, true);
-        if (!result) return res.status(400).send({ message: "Couldn't update the resource" });
-        return res.status(200).send({ message: "Resource updated successfully" });
-    } catch (error) {
-        return res.status(500).send({ message: error.message });
-    }
-});
-
-router.delete("/admin/:id", authMiddleware, adminMiddleware, async (req, res) => {
-    try {
-        const result = await userController.deleteUser(req.params.id);
-        if (!result) return res.status(400).send({ message: "Couldn't delete the resource" })
-        return res.status(200).send({ deleted: result });
-    } catch (error) {
-        return res.status(500).send({ message: error.message });
-    }
-});
-
-
 // -------------- User Routes -------------- //
 
 // 1. Profile

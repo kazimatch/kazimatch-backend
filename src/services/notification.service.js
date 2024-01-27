@@ -36,7 +36,6 @@ export class NotificationService {
             if (err) {
                 throw err;
             }
-            console.log(id);
         });
     }
 

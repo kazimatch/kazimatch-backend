@@ -7,7 +7,14 @@ export class JobService {
     }
 
     async getAll() {
-        const jobs = await this.job.findAll();
+        const jobs = await this.job.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'employer'
+                }
+            ]
+        });
         return jobs.map((job) => job.dataValues);
     }
 
@@ -23,7 +30,7 @@ export class JobService {
                 },
                 {
                     model: User,
-                    as: 'user'
+                    as: 'employer'
                 }
             ]
         }))?.dataValues;
@@ -70,6 +77,9 @@ export class JobService {
                 {
                     model: User,
                     as: 'user'
+                },
+                {
+                    model: Job,
                 }
             ]
         }))
