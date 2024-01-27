@@ -10,131 +10,83 @@ import { Application } from "./application.model.js";
 import { Thread } from "./thread.model.js";
 import { Message } from "./message.model.js";
 import { Feedback } from "./feedback.model.js";
+import { Plan } from "./plan.model.js";
+import { Subscription } from "./subscription.model.js";
 
-Document.belongsTo(User, {
-    foreignKey: 'id',
-    as: 'Owner'
+User.hasMany(Education, {
+    foreignKey: "applicantId",
+    as: "educations"
+});
+
+Education.belongsTo(User, {
+    foreignKey: "applicantId",
+});
+
+User.hasMany(Skill, {
+    foreignKey: "applicantId",
+    as: "skills"
 });
 
 Skill.belongsTo(User, {
-    foreignKey: 'id',
-    as: 'applicant'
-})
-
-User.hasMany(Skill, {
-    foreignKey: 'applicantId',
-    as: 'skills',
-    onDelete: 'CASCADE'
-})
-
-User.hasMany(Experience, {
-    foreignKey: 'applicantId',
-    as: 'experiences',
-    onDelete: 'CASCADE'
-})
-
-User.hasMany(Education, {
-    foreignKey: 'applicantId',
-    as: 'educations',
-    onDelete: 'CASCADE'
-})
-
-User.hasMany(Language, {
-    foreignKey: 'applicantId',
-    as: 'languages',
-    onDelete: 'CASCADE'
-})
-
-User.hasMany(Document, {
-    foreignKey: 'owner',
-    as: 'documents',
-    onDelete: 'CASCADE'
-})
-
-User.hasMany(Notification, {
-    foreignKey: 'recipient',
-    as: 'notifications',
-    onDelete: 'CASCADE'
-})
-
-User.hasMany(Job, {
-    foreignKey: 'owner',
-    as: 'jobs',
-    onDelete: 'CASCADE'
+    foreignKey: "applicantId",
 });
 
-User.hasMany(Application, {
-    foreignKey: 'applicant',
-    as: 'applications',
-    onDelete: 'CASCADE'
-})
+User.hasMany(Experience, {
+    foreignKey: "applicantId",
+    as: "experiences"
+});
 
-Job.hasMany(Application, {
-    foreignKey: "job",
-    as: "applications",
-    onDelete: 'CASCADE'
-})
+Experience.belongsTo(User, {
+    foreignKey: "applicantId",
+});
+
+User.hasMany(Language, {
+    foreignKey: "applicantId",
+    as: "languages"
+});
+
+Language.belongsTo(User, {
+    foreignKey: "applicantId",
+});
+
+User.hasMany(Document, {
+    foreignKey: "owner",
+    as: "documents"
+});
+
+Document.belongsTo(User, {
+    foreignKey: "owner",
+});
 
 Job.hasOne(User, {
     foreignKey: "id",
-    as: 'user'
-})
+    as: "employer"
+});
 
-Application.hasOne(User, {
-    foreignKey: "id",
-    as: "user",
-})
+User.hasMany(Job, {
+    foreignKey: "employerId",
+    as: "jobs"
+});
+
+Job.hasMany(Application, {
+    foreignKey: "job",
+    as: "applications"
+});
 
 Application.belongsTo(Job, {
-    foreignKey: "id",
-    as: "source"
-})
+    foreignKey: "job",
+});
 
-Thread.hasOne(User, {
-    foreignKey: 'partyA',
-    as: 'userA'
-})
+User.hasMany(Application, {
+    foreignKey: "applicant",
+    as: "applications"
+});
 
-Thread.hasOne(User, {
-    foreignKey: 'partyB',
-    as: 'userB'
-})
+Application.belongsTo(User, {
+    foreignKey: "applicant",
+    as: "user"
+});
 
-Thread.hasMany(Message, {
-    foreignKey: 'threadId',
-    as: 'messages',
-    onDelete: 'CASCADE'
-})
-
-Message.hasOne(User, {
-    foreignKey: 'to',
-    as: 'recipient'
-})
-
-Message.hasOne(User, {
-    foreignKey: 'from',
-    as: 'sender'
-})
-
-Message.hasOne(Thread, {
-    foreignKey: 'threadId',
-    as: 'thread'
-})
-
-Feedback.hasOne(User, {
-    foreignKey: 'employerId',
-    as: 'employer'
-})
-
-Feedback.hasOne(User, {
-    foreignKey: 'applicantId',
-    as: 'applicant'
-})
-
-Language.hasOne(User, {
-    foreignKey: 'id',
-    as: 'applicant'
-})
 
 export {
     User,
@@ -148,5 +100,7 @@ export {
     Application,
     Message,
     Thread,
-    Feedback
+    Feedback,
+    Plan,
+    Subscription
 }

@@ -17,7 +17,7 @@ export const Education = database.sequelize.define('Education', {
     school: {
         type: DataTypes.STRING,
         allowNull: false
-    },
+    }, 
     field: {
         type: DataTypes.STRING,
         allowNull: false
