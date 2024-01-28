@@ -15,7 +15,7 @@ export const Document = database.sequelize.define('Document', {
     },
     url: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     owner: {
         type: DataTypes.INTEGER,
@@ -24,6 +24,11 @@ export const Document = database.sequelize.define('Document', {
             model: User,
             key: 'id'
         }
+    },
+    type: {
+        type: DataTypes.ENUM('CV', 'CL', 'OTHER'),
+        allowNull: false,
+        defaultValue: 'OTHER'
     }
 }, {
     tableName: 'documents',

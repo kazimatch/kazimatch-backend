@@ -12,12 +12,12 @@ import e from "express";
  * @returns 
  */
 const authMiddleware = async (req, res, next) => {
-    const token = req.headers["authorization"].split(" ")[1];
-    if (!token) return res.status(401).send({
-        message: "Unauthorized"
-    });
-
     try {
+        const token = req.headers["authorization"].split(" ")[1];
+        if (!token) return res.status(401).send({
+            message: "Unauthorized"
+        });
+
         const decoded = jwt.verify(token, config.JWT_SECRET);
         const user = await new UserService().getById(decoded.id);
 
@@ -26,6 +26,7 @@ const authMiddleware = async (req, res, next) => {
                 message: "Unauthorized - Session Logged Out"
             });
         }
+        
         req.user = user;
         next();
     } catch (error) {
