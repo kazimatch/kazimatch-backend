@@ -46,6 +46,10 @@ export class SubscriptionController {
             plan: subscription.plan.dataValues
         }
 
+        this.userService.update(subscription.applicantId, {
+            isActivated: true
+        });
+
         data.status = 'active';
         data.startDate = new Date();
 
