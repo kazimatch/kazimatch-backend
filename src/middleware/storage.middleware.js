@@ -3,13 +3,10 @@ import { v4 } from "uuid";
 
 const storage = multer.diskStorage({
    
-    filename: function (req, file, cb) {
+    filename: function (_, file, cb) {
         const uniqueSuffix = v4();
         const filename = file.fieldname + '-' + uniqueSuffix + file.originalname;
-        req.meta = {
-            name: filename,
-            type: req.body?.type
-        }
+       
         cb(null, filename)
     }
 })

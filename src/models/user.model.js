@@ -76,6 +76,10 @@ export const User = database.sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: true
     },
+    about: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    }
 }, {
     tableName: 'users',
     paranoid: true,

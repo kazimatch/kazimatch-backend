@@ -60,9 +60,9 @@ router.get("/:id/view", authMiddleware, async (req, res) => {
 router.post("/", authMiddleware, uploadMiddleware, async (req, res) => {
     try {
         const result = await Document.create({
-            name: req.meta.name,
+            name: req.file.filename,
             owner: req.user.id,
-            type: req.meta.type
+            type: req.body.type
         })
 
         if (!result) {
