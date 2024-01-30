@@ -1,13 +1,28 @@
 import { Job, Application, User } from "../models/index.js";
 
+/**
+ * @typedef {Object} QueryOptions
+ * @property {number?} limit
+ * @property {number?} offset
+ * @property {{[key]:value}} where
+ * @property {string?} orderBy
+ */
+
 export class JobService {
     constructor() {
         this.job = Job;
         this.applications = Application;
     }
-
-    async getAll() {
+    /**
+     * 
+     * @param {QueryOptions?} query 
+     * @returns 
+     */
+    async getAll(query = null) {
         const jobs = await this.job.findAll({
+            limit: query?.limit ?? 100,
+            offset: query?.offset ?? 0,
+            where: query?.where,
             include: [
                 {
                     model: User,
@@ -36,11 +51,20 @@ export class JobService {
         }))?.dataValues;
     }
 
-    async getUserJobs(userId) {
+    /**
+     * 
+     * @param {number} userId 
+     * @param {QueryOptions?} query 
+     * @returns 
+     */
+    async getUserJobs(userId, query = null) {
         const jobs = await this.job.findAll({
             where: {
-                owner: userId
-            }
+                ...query?.where,
+                owner: userId,
+            },
+            limit: query?.limit ?? 100,
+            offset: query?.offset ?? 0,
         })
 
         return jobs.map((job) => job?.dataValues);
