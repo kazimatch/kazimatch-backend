@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { JobController } from "../controllers/job.controller.js";
+import { JobController } from "../controllers/index.js";
 import { authMiddleware, recruiterMiddleware } from "../middleware/auth.middleware.js";
 
 const router = Router();
@@ -8,7 +8,7 @@ const jobController = new JobController();
 // --------------------- JOB LISTING --------------------------------
 router.get("/", async (req, res) => {
     try {
-        res.json(await jobController.getAllJobs());
+        res.json(await jobController.getAllJobs(req.query));
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

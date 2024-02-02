@@ -1,4 +1,4 @@
-import { Message, Thread } from "../models/index.js";
+import { Message, Thread, User } from "../models/index.js";
 import { Op } from "sequelize";
 export class MessageService {
     constructor() {
@@ -10,7 +10,23 @@ export class MessageService {
         const threads = await this.thread.findAll({
             where: {
                 [Op.or]: [{ partyA: userId }, { partyB: userId }]
-            }
+            },
+            include: [
+                {
+                    model: this.message,
+                    limit: 1,
+                    order: [['createdAt', 'DESC']],
+                    as: "messages"
+                },
+                {
+                    model: User,
+                    as: 'sender',
+                },
+                {
+                    model: User,
+                    as: 'receiver',
+                }
+            ]
         });
 
         return threads.map((thread) => thread.dataValues);

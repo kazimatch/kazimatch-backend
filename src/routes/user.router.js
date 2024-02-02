@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { authMiddleware, adminMiddleware } from "../middleware/auth.middleware.js";
-import { UserController } from "../controllers/index.js";
-import { body, checkSchema, param } from "express-validator";
+import { authMiddleware } from "../middleware/auth.middleware.js";
+import { UserController, JobController } from "../controllers/index.js";
+import { checkSchema, param } from "express-validator";
 
 const router = Router();
 const userController = new UserController();
-
+const jobsController = new JobController();
 // -------------- User Routes -------------- //
 
 // 1. Profile
@@ -284,5 +284,17 @@ router.delete("/me/documents/:id",
         }
     }
 );
+
+
+// 7. My Jobs
+
+router.get("/me/jobs", authMiddleware, async (req, res) => {
+    try {
+        const jobs = await jobsController.getUserJobs(req.user.id, req.query);
+        return res.status(200).send(jobs);
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+});
 
 export default router;

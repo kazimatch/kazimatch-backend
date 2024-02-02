@@ -4,11 +4,14 @@ import { MessageController } from "./message.controller.js";
 import { FeedbackController } from "./feedback.controller.js";
 import { SubscriptionController } from "./subscription.controller.js";
 import { AdminUserController } from "./admin/admin.user.controller.js";
+import { JobController } from "./job.controller.js";
+
 export {
     AuthController,
     UserController,
     MessageController,
     FeedbackController,
     SubscriptionController,
-    AdminUserController
+    AdminUserController,
+    JobController
 }

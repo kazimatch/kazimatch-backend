@@ -1,6 +1,7 @@
 import { Job } from "../models/index.js";
 import { JobService, QueueService, UserService } from "../services/index.js";
 import { emailTemplate } from "../utils/template.js";
+
 export class JobController {
     constructor() {
         this.jobService = new JobService();
@@ -18,20 +19,66 @@ export class JobController {
     }
 
     /**
+     * @param {Object} query
+     * 
      * @returns {Promise<object[]>}
      */
-    async getAllJobs() {
-        return (await this.jobService.getAll());
+    async getAllJobs(query = null) {
+        const queryOptions = {
+            limit: query?.limit ?? 100,
+            offset: query?.offset ?? 0,
+            where: {
+                status: query?.status ?? 'accepting',
+                title: query?.title ?? null,
+                category: query?.category ?? null, 
+                location: query?.location ?? null,
+                type: query?.type ?? null,
+                start: query?.start ?? null,
+                end: query?.end ?? null,
+                salary: query?.salary ?? null,
+                skills: query?.skills ?? null,
+                experience: query?.experience ?? null,
+            },
+            orderBy: query?.orderBy
+        }
+
+        Object.keys(queryOptions.where)
+            .forEach((key) => (queryOptions.where[key] == null)
+                && delete queryOptions.where[key]);
+
+        return (await this.jobService.getAll(queryOptions));
     }
 
     /**
      * 
      * @param {number} userId 
      * 
+     * @param {Object} query
+     * 
      * @returns {Promise<object[]>}
      */
-    async getUserJobs(userId) {
-        return (await this.jobService.getUserJobs(userId));
+    async getUserJobs(userId, query) {
+        const queryOptions = {
+            limit: query?.limit ?? 100,
+            offset: query?.offset ?? 0,
+            where: {
+                status: query?.status ?? 'accepting',
+                title: query?.title ?? null,
+                location: query?.location ?? null,
+                type: query?.type ?? null,
+                start: query?.start ?? null,
+                end: query?.end ?? null,
+                salary: query?.salary ?? null,
+                skills: query?.skills ?? null,
+            },
+            orderBy: query?.orderBy
+        }
+
+        Object.keys(queryOptions.where)
+            .forEach((key) => (queryOptions.where[key] == null)
+                && delete queryOptions.where[key]);
+
+        return (await this.jobService.getUserJobs(userId, queryOptions));
     }
 
     /**

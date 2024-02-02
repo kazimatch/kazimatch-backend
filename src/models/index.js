@@ -87,6 +87,32 @@ Application.belongsTo(User, {
     as: "user"
 });
 
+// User.hasMany(Thread, {
+//     foreignKey: "partyA",
+//     as: "sender"
+// });
+
+// User.hasMany(Thread, {
+//     foreignKey: "partyB",
+//     as: "recipient"
+// });
+
+Thread.hasOne(User, {
+    sourceKey: "partyA",
+    foreignKey: "id",
+    as: "sender"
+});
+
+Thread.hasOne(User, {
+    sourceKey: "partyB",
+    foreignKey: "id",
+    as: "receiver"
+});
+
+Thread.hasMany(Message, {
+    foreignKey: "threadId",
+    as: "messages"
+});
 
 export {
     User,
