@@ -48,6 +48,8 @@ export class AuthController {
         const token = jwtToken(user);
         const refreshToken = jwtToken(user, true);
 
+        await this.userService.update(user.id, { refreshToken });
+
         QueueService.queue("email", {
             to: user.email,
             subject: "KaziMatch Account Verification",
