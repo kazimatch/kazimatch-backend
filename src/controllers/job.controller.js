@@ -28,7 +28,7 @@ export class JobController {
             limit: query?.limit ?? 100,
             offset: query?.offset ?? 0,
             where: {
-                status: query?.status ?? 'accepting',
+                status: query?.status,
                 title: query?.title ?? null,
                 category: query?.category ?? null, 
                 location: query?.location ?? null,
@@ -62,7 +62,7 @@ export class JobController {
             limit: query?.limit ?? 100,
             offset: query?.offset ?? 0,
             where: {
-                status: query?.status ?? 'accepting',
+                status: query?.status,
                 title: query?.title ?? null,
                 location: query?.location ?? null,
                 type: query?.type ?? null,

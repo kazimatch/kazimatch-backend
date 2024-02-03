@@ -34,7 +34,7 @@ export const Job = database.sequelize.define('Job', {
         }
     },
     type: {
-        values: ['full-time', 'part-time', 'freelance', 'internship'],
+        values: ['full-time', 'part-time', 'contract', 'internship', 'volunteer'],
         type: DataTypes.STRING,
         allowNull: false,
     },
