@@ -65,6 +65,16 @@ export class JobService {
             },
             limit: query?.limit ?? 100,
             offset: query?.offset ?? 0,
+            include: [
+                {
+                    model: Application,
+                    as: "applications"
+                },
+                {
+                    model: User,
+                    as: 'employer'
+                }
+            ]
         })
 
         return jobs.map((job) => job?.dataValues);
