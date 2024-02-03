@@ -59,12 +59,14 @@ Document.belongsTo(User, {
 });
 
 Job.hasOne(User, {
+    sourceKey: "owner",
     foreignKey: "id",
     as: "employer"
 });
 
 User.hasMany(Job, {
-    foreignKey: "employerId",
+    sourceKey: "id",
+    foreignKey: "owner",
     as: "jobs"
 });
 
