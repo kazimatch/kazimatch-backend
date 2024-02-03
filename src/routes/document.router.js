@@ -38,12 +38,11 @@ router.get("/:id", authMiddleware, async (req, res) => {
     }
 });
 
-router.get("/:id/view", authMiddleware, async (req, res) => {
+router.get("/:id/view", async (req, res) => {
     try {
         const doc = await Document.findOne({
             where: {
                 id: req.params.id,
-                owner: req.user.id
             }
         })
         if (!doc) {
@@ -99,7 +98,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
                 if (err) {
                     reject(err);
                 }
-                
+
                 await doc.destroy();
                 resolve();
             });
