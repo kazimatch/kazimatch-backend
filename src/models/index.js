@@ -84,10 +84,12 @@ User.hasMany(Application, {
     as: "applications"
 });
 
-Application.belongsTo(User, {
-    foreignKey: "applicant",
+
+Application.hasOne(User, {
+    sourceKey: "applicant",
+    foreignKey: "id",
     as: "user"
-});
+})
 
 // User.hasMany(Thread, {
 //     foreignKey: "partyA",
