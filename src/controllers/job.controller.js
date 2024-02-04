@@ -118,7 +118,7 @@ export class JobController {
 
     /**
      * 
-     * @param {number} userId 
+     * @param {number} userId  
      * @param {number} id 
      * 
      * @returns {Promise<object[]>}

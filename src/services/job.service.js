@@ -102,10 +102,10 @@ export class JobService {
         }))
     }
 
-    async getJobApplications(jobId) {
+    async getJobApplications(_, jobId) {
         return (await this.applications.findAll({
             where: {
-                job: jobId
+                job: jobId,
             },
             include: [
                 {
