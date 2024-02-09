@@ -14,7 +14,7 @@ const router = Router();
 router.use('/auth', authRouter);
 router.use('/users', userRouter);
 router.use('/jobs', jobRouter);
-router.use('/messages', messageRouter);
+router.use('/threads', messageRouter);
 router.use('/subscriptions', subscriptionRouter);
 router.use('/plans', plansRouter);
 router.use('/feedbacks', feedbacksRouter);
