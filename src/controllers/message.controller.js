@@ -10,11 +10,11 @@ export class MessageController {
         return (await this.messageService.getUserThreads(userId));
     }
 
-    async getThreadMessages(threadId) {
-        const thread = await this.messageService.getThread(threadId);
+    async getThreadMessages(to, from) {
+        const thread = await this.messageService.getThread(to, from);
         if (!thread) return null;
 
-        return (await this.messageService.getThreadMessages(threadId));
+        return (await this.messageService.getThreadMessages(to, from));
     }
 
     async addMessage(userId, body) {
@@ -24,9 +24,9 @@ export class MessageController {
         const recipient = await this.userService.getById(body.to);
 
         // You can only send messages to activated users
-        if (!recipient || !recipient.isActivated) {
-            return null
-        }
+        // if (!recipient || !recipient.isActivated) {
+        //     return null
+        // }
 
         const message = await this.messageService.addMessage(body);
         if (!message) return null;

@@ -31,6 +31,12 @@ export const Notification = database.sequelize.define('Notification', {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
+    },
+    action: {
+        type: DataTypes.STRING,
+        values: ['account', 'message', 'feedback'],
+        defaultValue: 'account',
+        allowNull: false
     }
 }, {
     tableName: 'notifications'

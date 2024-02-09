@@ -32,18 +32,25 @@ export class MessageService {
         return threads.map((thread) => thread.dataValues);
     }
 
-    async getThread(threadId) {
+    async getThread(to, from) {
         return (await this.thread.findOne({
             where: {
-                id: threadId
+                [Op.or]: [
+                    { partyA: to, partyB: from },
+                    { partyA: from, partyB: to }
+                ]
             }
         }))?.dataValues;
     }
 
-    async getThreadMessages(threadId) {
+    async getThreadMessages(to, from) {
         const messages = await this.message.findAll({
             where: {
-                threadId
+
+                [Op.or]: [
+                    { to: to, from: from },
+                    { to: from, from: to }
+                ]
             }
         });
 

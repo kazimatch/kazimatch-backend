@@ -26,7 +26,7 @@ export const Message = database.sequelize.define('Message', {
         }
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
     },
     read: {

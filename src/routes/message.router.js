@@ -18,7 +18,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
 router.get('/:id/messages', authMiddleware, async (req, res) => {
     try {
-        const messages = await messageController.getThreadMessages(req.params.id);
+        const messages = await messageController.getThreadMessages(req.params.id, req.user.id);
         if (!messages) return res.status(404).json({ message: 'Thread not found' });
 
         return res.json(messages);
