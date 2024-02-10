@@ -1,11 +1,11 @@
 import { Job, Application, User } from "../models/index.js";
-
+import { Op } from "sequelize";
 /**
  * @typedef {Object} QueryOptions
  * @property {number?} limit
  * @property {number?} offset
- * @property {{[key]:value}} where
- * @property {string?} orderBy
+ * @property {{[string]:any}} where
+ * @property {{[string]:any}[]} orderBy
  */
 
 export class JobService {
@@ -23,6 +23,7 @@ export class JobService {
             limit: query?.limit ?? 100,
             offset: query?.offset ?? 0,
             where: query?.where,
+            order: query?.orderBy,
             include: [
                 {
                     model: User,
@@ -102,11 +103,39 @@ export class JobService {
         }))
     }
 
-    async getJobApplications(_, jobId) {
+    /**
+     * 
+     * @param {*} _ 
+     * @param {*} jobId 
+     * @param {QueryOptions} queryOptions 
+     * @returns 
+     */
+    async getJobApplications(_, jobId, queryOptions = null) {
+        let where = [];
+
+        for (const [key, value] of Object.entries(queryOptions.where)) {
+            if (value == null) continue;
+            where.push({
+                [key]: {
+                    [Op.eq]: value
+                }
+            })
+        }
+
+        console.log(where);
+
         return (await this.applications.findAll({
             where: {
                 job: jobId,
+                [Op.and]: [
+                    {
+                        [Op.or]: where
+                    }
+                ]
             },
+            limit: queryOptions?.limit,
+            offset: queryOptions?.offset,
+            order: queryOptions?.orderBy,
             include: [
                 {
                     model: User,

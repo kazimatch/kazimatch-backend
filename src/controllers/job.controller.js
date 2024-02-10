@@ -30,7 +30,7 @@ export class JobController {
             where: {
                 status: query?.status,
                 title: query?.title ?? null,
-                category: query?.category ?? null, 
+                category: query?.category ?? null,
                 location: query?.location ?? null,
                 type: query?.type ?? null,
                 start: query?.start ?? null,
@@ -120,11 +120,22 @@ export class JobController {
      * 
      * @param {number} userId  
      * @param {number} id 
+     * @param {any} query
      * 
      * @returns {Promise<object[]>}
      */
-    async getJobApplications(userId, id) {
-        return (await this.jobService.getJobApplications(userId, id));
+    async getJobApplications(userId, id, query = null) {
+        const queryOptions = {
+            limit: query?.limit ?? 100,
+            offset: query?.offset ?? 0,
+            where: {
+                status: query?.status,
+                createdAt: query?.createdAt ?? null,
+            },
+            orderBy: query?.orderBy
+        }
+
+        return (await this.jobService.getJobApplications(userId, id, queryOptions));
     }
 
     /**

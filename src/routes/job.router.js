@@ -58,7 +58,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 
 router.get("/:id/applications", authMiddleware, async (req, res) => {
     try {
-        res.json(await jobController.getJobApplications(req.user.id, req.params.id));
+        res.json(await jobController.getJobApplications(req.user.id, req.params.id, req.query));
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
