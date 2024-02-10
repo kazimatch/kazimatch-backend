@@ -17,7 +17,7 @@ export const Feedback = database.sequelize.define('Feedback', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    employerId: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -25,7 +25,7 @@ export const Feedback = database.sequelize.define('Feedback', {
             key: 'id'
         }
     },
-    applicantId: {
+    employerId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {

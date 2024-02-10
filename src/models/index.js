@@ -118,6 +118,24 @@ Thread.hasMany(Message, {
     as: "messages"
 });
 
+Feedback.hasOne(User, {
+    sourceKey: "employerId",
+    foreignKey: "id",
+    as: "employer"
+})
+
+Feedback.hasOne(User, {
+    sourceKey: "userId",
+    foreignKey: "id",
+    as: "user"
+});
+
+Application.hasMany(Feedback, {
+    sourceKey: "applicant",
+    foreignKey: "userId",
+    as: "feedbacks"
+});
+
 export {
     User,
     Notification,

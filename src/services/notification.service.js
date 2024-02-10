@@ -24,7 +24,7 @@ export class NotificationService {
      * @param {{tokens: string[], title: string, body: string }} data
      */
     static async sendNotification(data) {
-        const { tokens, title, body } = data;
+        const { tokens, title, body, userId } = data;
         await this.pushy.sendPushNotification({
             message: body
         }, tokens, {
@@ -39,11 +39,11 @@ export class NotificationService {
         });
     }
 
-    async addNotification(body) {
+    static async addNotification(body) {
         return await Notification.create(body);
     }
 
-    async getNotifications(userId) {
+    static async getNotifications(userId) {
         return await Notification.findAll({
             where: {
                 recipient: userId

@@ -56,6 +56,10 @@ export class MpesaService {
             const seconds = ('0' + date.getSeconds()).slice(-2);
             const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
 
+            const callbackUrl = `${config.App.baseUrl}/api/v1/subscriptions/callback`;
+
+            console.log("Callback: ", callbackUrl);
+
             const data = {
                 "BusinessShortCode": config.Mpesa.shortCode,
                 "Password": btoa(`${config.Mpesa.shortCode}${config.Mpesa.passKey}${timestamp}`),
@@ -65,7 +69,7 @@ export class MpesaService {
                 "PartyA": phone,
                 "PartyB": config.Mpesa.shortCode,
                 "PhoneNumber": phone,
-                "CallBackURL": `https://b790-41-215-59-142.ngrok-free.app/api/v1/subscriptions/callback`,
+                "CallBackURL": callbackUrl,
                 "AccountReference": "KaziMatch Payment",
                 "TransactionDesc": "KaziMatch Payment"
             };
@@ -78,6 +82,10 @@ export class MpesaService {
                     "Authorization": `Bearer ${token}`
                 }
             });
+            
+            console.log("Phone Number: ", phone);
+            console.log("Callback: ", callbackUrl);
+
             if (!response.ok) return null;
 
             return (await response.json());

@@ -1,32 +1,38 @@
-import { FeedbackService } from "../services/index.js";
+import { FeedbackService, NotificationService } from "../services/index.js";
 
 export class FeedbackController {
-    constructor(){
+    constructor() {
         this.feedbackService = new FeedbackService();
     }
 
-    async getAll(){
+    async getAll() {
         return await this.feedbackService.getAll();
     }
 
-    async getUserFeedback(applicantId){
+    async getUserFeedback(applicantId) {
         return await this.feedbackService.getUserFeedback(applicantId);
     }
 
-    async getFeedback(id){
+    async getFeedback(id) {
         return await this.feedbackService.getFeedback(id);
     }
 
-    async addFeedback(userId, body){
+    async addFeedback(userId, body) {
         body['employerId'] = userId;
+        
+        await NotificationService.addNotification({
+            recipient: body.userId,
+            message: 'You have received a new feedback'
+        });
+
         return await this.feedbackService.addFeedback(body);
     }
 
-    async updateFeedback(userId, id, body){
+    async updateFeedback(userId, id, body) {
         return (await this.feedbackService.updateFeedback(userId, id, body));
     }
 
-    async deleteFeedback(userId, id){
+    async deleteFeedback(userId, id) {
         return await this.feedbackService.deleteFeedback(userId, id);
     }
 }

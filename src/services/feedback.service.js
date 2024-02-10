@@ -1,26 +1,37 @@
 import { Feedback } from "../models/index.js";
+import { User } from "../models/index.js";
 
 export class FeedbackService {
-    constructor(){
+    constructor() {
         this.feedback = Feedback
     }
 
-    async getAll(){
+    async getAll() {
         const feedbacks = await this.feedback.findAll();
         return feedbacks.map((feedback) => feedback.dataValues);
     }
 
-    async getUserFeedback(applicantId){
+    async getUserFeedback(applicantId) {
         const feedbacks = await this.feedback.findAll({
             where: {
-                applicantId
-            }
+                userId: applicantId
+            },
+            include: [
+                {
+                    model: User,
+                    as: 'employer'
+                },
+                {
+                    model: User,
+                    as: 'user'
+                }
+            ]
         })
 
         return feedbacks.map((feedback) => feedback.dataValues);
     }
 
-    async getFeedback(id){
+    async getFeedback(id) {
         return (await this.feedback.findOne({
             where: {
                 id
@@ -28,11 +39,11 @@ export class FeedbackService {
         }))?.dataValues;
     }
 
-    async addFeedback(body){
+    async addFeedback(body) {
         return (await this.feedback.create(body))?.dataValues
     }
 
-    async updateFeedback(userId, id, body){
+    async updateFeedback(userId, id, body) {
         return (await this.feedback.update(body, {
             where: {
                 id,
@@ -41,7 +52,7 @@ export class FeedbackService {
         })).length > 0;
     }
 
-    async deleteFeedback(userId, id){
+    async deleteFeedback(userId, id) {
         return (await this.feedback.destroy({
             where: {
                 id,

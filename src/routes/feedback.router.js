@@ -27,9 +27,11 @@ router.get('/:id', authMiddleware, async (req, res) => {
     }
 });
 
+
+
 router.post('/', authMiddleware, recruiterMiddleware, async (req, res) => {
     try {
-        const feedback = await feedbackController.addFeedback(req.body);
+        const feedback = await feedbackController.addFeedback(req.user.id, req.body);
         return res.json(feedback);
     } catch (err) {
         return res.status(500).json({ error: err.message });

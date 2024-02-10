@@ -1,4 +1,4 @@
-import { Job, Application, User } from "../models/index.js";
+import { Job, Application, User, Feedback } from "../models/index.js";
 import { Op } from "sequelize";
 /**
  * @typedef {Object} QueryOptions
@@ -110,32 +110,38 @@ export class JobService {
      * @param {QueryOptions} queryOptions 
      * @returns 
      */
-    async getJobApplications(_, jobId, queryOptions = null) {
-        let where = [];
-
-        for (const [key, value] of Object.entries(queryOptions.where)) {
-            if (value == null) continue;
-            where.push({
-                [key]: {
-                    [Op.eq]: value
-                }
-            })
-        }
-
-        console.log(where);
-
-        return (await this.applications.findAll({
+    async getJobApplications(jobId, queryOptions = null) {
+        let result = await this.applications.findAll({
             where: {
-                job: jobId,
-                [Op.and]: [
-                    {
-                        [Op.or]: where
-                    }
-                ]
+                job: jobId
             },
-            limit: queryOptions?.limit,
-            offset: queryOptions?.offset,
-            order: queryOptions?.orderBy,
+            include: [
+                {
+                    model: User,
+                    as: 'user'
+                },
+                {
+                    model: Job,
+                },
+                {
+                    model: Feedback,
+                    as: 'feedbacks'
+                }
+            ]
+        });
+
+        return result.map((app) => app.dataValues);
+    }
+
+    /**
+    * @param {number} applicationId
+    * @returns 
+    */
+    async getJobApplication(applicationId) {
+        let result = await this.applications.findOne({
+            where: {
+                id: applicationId
+            },
             include: [
                 {
                     model: User,
@@ -145,7 +151,9 @@ export class JobService {
                     model: Job,
                 }
             ]
-        }))
+        });
+
+        return result?.dataValues;
     }
 
     async addJobApplication(body) {

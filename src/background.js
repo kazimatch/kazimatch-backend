@@ -1,6 +1,6 @@
 import { Job, User, Application } from "./models/index.js"
 import { Op } from "sequelize"
-import { CronService, QueueService } from "./services/index.js"
+import { CronService, NotificationService, QueueService } from "./services/index.js"
 import chalk from "chalk";
 
 /**
@@ -61,6 +61,12 @@ const feedback = async () => {
             const applicant = application.user.dataValues;
 
             console.log("Sending feedback to", job.user.email);
+
+            await NotificationService.addNotification({
+                recipient: job.user.id,
+                message: `How was your experience with ${applicant.fullName}?`,
+                type: "feedback"
+            });
 
             QueueService.queue('email', {
                 to: job.user.email,

@@ -125,17 +125,12 @@ export class JobController {
      * @returns {Promise<object[]>}
      */
     async getJobApplications(userId, id, query = null) {
-        const queryOptions = {
-            limit: query?.limit ?? 100,
-            offset: query?.offset ?? 0,
-            where: {
-                status: query?.status,
-                createdAt: query?.createdAt ?? null,
-            },
-            orderBy: query?.orderBy
-        }
+        const job = await this.jobService.getJob(id);
+        if (!job) return null;
 
-        return (await this.jobService.getJobApplications(userId, id, queryOptions));
+        if (job.owner !== userId) return null;
+
+        return (await this.jobService.getJobApplications(id, query));
     }
 
     /**
@@ -170,20 +165,20 @@ export class JobController {
 
         const status = body.status;
 
-        const application = job.applications.find((app) => app.id == appId)?.dataValues;
+        const application = await this.jobService.getJobApplication(appId);
         if (!application) return null;
 
         const res = await this.jobService.updateApplication(appId, status)
         if (!res) return null;
 
-        const user = await this.userService.getById(application.applicant);
+        const user = application.user.dataValues;
 
         QueueService.queue("email", {
             to: user.email,
             subject: `Application Update - ${job.title} `,
             html: emailTemplate({
                 name: user.fullName,
-                message: `Hello, your application for ${job.title} at ${job.user.fullName} has been  ${status}`,
+                message: `Hello, your application for ${job.title} at ${job.employer.fullName} has been  ${status}`,
                 sign: status === 'accepted' ? "Look out for communications from the recruiter" : null
             })
         });

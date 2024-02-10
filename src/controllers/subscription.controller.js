@@ -10,10 +10,20 @@ export class SubscriptionController {
     async createSubscription(userId, data) {
         const user = await this.userService.getById(userId);
 
+        console.log(user)
+
         const plan = await this.subscriptionService.getPlan(data.planId);
         if (!plan) return null;
 
-        const mpesaResponse = await this.mpesaService.stk(user.phoneNumber, plan.price);
+        let phone = user.phoneNumber;
+
+        if (phone.startsWith('0')) {
+            phone = `254${phone.slice(1)}`;
+        }
+
+        const mpesaResponse = await this.mpesaService.stk(phone, plan.price);
+
+        console.log("The mpesa response", mpesaResponse);
         if (mpesaResponse?.ResponseCode != '0') return null;
 
         const subscription = await this.subscriptionService.createSubscription({

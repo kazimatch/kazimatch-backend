@@ -14,7 +14,7 @@ export class CronService {
     }
 
     async schedule() {
-        cron.schedule('* * * * *', async () => {
+        cron.schedule('0 0 * * 1', async () => {
             this.tasks.forEach(async (task) => {
                 await task();
             });
