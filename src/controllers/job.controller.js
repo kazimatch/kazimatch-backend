@@ -24,29 +24,8 @@ export class JobController {
      * @returns {Promise<object[]>}
      */
     async getAllJobs(query = null) {
-        const queryOptions = {
-            limit: query?.limit ?? 100,
-            offset: query?.offset ?? 0,
-            where: {
-                status: query?.status,
-                title: query?.title ?? null,
-                category: query?.category ?? null,
-                location: query?.location ?? null,
-                type: query?.type ?? null,
-                start: query?.start ?? null,
-                end: query?.end ?? null,
-                salary: query?.salary ?? null,
-                skills: query?.skills ?? null,
-                experience: query?.experience ?? null,
-            },
-            orderBy: query?.orderBy
-        }
 
-        Object.keys(queryOptions.where)
-            .forEach((key) => (queryOptions.where[key] == null)
-                && delete queryOptions.where[key]);
-
-        return (await this.jobService.getAll(queryOptions));
+        return (await this.jobService.getAll(query));
     }
 
     /**

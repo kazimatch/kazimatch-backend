@@ -1,5 +1,5 @@
 import { Job, Application, User, Feedback } from "../models/index.js";
-import { Op } from "sequelize";
+import { Op, fn, col, where as Where } from "sequelize";
 /**
  * @typedef {Object} QueryOptions
  * @property {number?} limit
@@ -19,10 +19,32 @@ export class JobService {
      * @returns 
      */
     async getAll(query = null) {
+        let where = {};
+
+        const kv = Object.entries(query);
+
+        for (var option of kv) {
+            if (option[0] === 'limit' || option[0] === 'offset') continue;
+
+            if (option[0] === 'start' || option[0] == 'end') {
+                where[option[0]] = {
+                    [Op.lte]: new Date(option[1])
+                }
+                continue;
+            }
+
+            where[option[0]] = {
+                [option[0]]: Where(fn('LOWER', col(option[0])), 'LIKE', `%${option[1].toLowerCase()}%`).comparator,
+            }
+        }
+
+
         const jobs = await this.job.findAll({
             limit: query?.limit ?? 100,
             offset: query?.offset ?? 0,
-            where: query?.where,
+            where: kv.length ? {
+                [Op.or]: where
+            } : null,
             order: query?.orderBy,
             include: [
                 {
@@ -31,7 +53,7 @@ export class JobService {
                 }
             ]
         });
-        return jobs.map((job) => job.dataValues);
+        return jobs?.map((job) => job.dataValues);
     }
 
     async getJob(id) {
