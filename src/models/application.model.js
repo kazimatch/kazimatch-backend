@@ -26,7 +26,7 @@ export const Application = database.sequelize.define('Application', {
         }
     },
     status: {
-        values: ['pending', 'accepted', 'rejected'],
+        values: ['pending', 'accepted', 'hired', 'rejected'],
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'pending'

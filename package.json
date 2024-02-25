@@ -1,7 +1,7 @@
 {
   "name": "ros-auth",
-  "version": "0.1.20",
-  "description": "Ramani Online Server authentication module",
+  "version": "0.2.25",
+  "description": "KaziMatch API",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -11,19 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bryanbill/ros-auth.git"
+    "url": "git+https://github.com/bryanbill/kazimatch-backend.git"
   },
-  "keywords": [
-    "Geofence",
-    "Authentication",
-    "Notification"
-  ],
-  "author": "Brian Omondi <brian.omondi@ramani.co.ke>",
+  "author": "Brian Omondi <bryanomondi254@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bryanbill/ros-auth/issues"
+    "url": "https://github.com/bryanbill/kazimatch-backend/issues"
   },
-  "homepage": "https://github.com/bryanbill/ros-auth#readme",
+  "homepage": "https://github.com/bryanbill/kazimatch-backend#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "bullmq": "^4.16.0",

@@ -79,7 +79,11 @@ export const User = database.sequelize.define('User', {
     about: {
         type: DataTypes.TEXT,
         allowNull: true
-    }
+    },
+    rating: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 }, {
     tableName: 'users',
     paranoid: true,

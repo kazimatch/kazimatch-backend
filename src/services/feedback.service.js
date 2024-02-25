@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import { Feedback } from "../models/index.js";
 import { User } from "../models/index.js";
 
@@ -14,7 +15,14 @@ export class FeedbackService {
     async getUserFeedback(applicantId) {
         const feedbacks = await this.feedback.findAll({
             where: {
-                userId: applicantId
+                [Op.or]: [
+                    {
+                        userId: applicantId
+                    },
+                    {
+                        employerId: applicantId
+                    }
+                ]
             },
             include: [
                 {

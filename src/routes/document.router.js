@@ -3,7 +3,6 @@ import { Document } from "../models/index.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import { uploadMiddleware } from "../middleware/storage.middleware.js";
 import { config } from "../config/index.js";
-import os from 'os';
 import fs from 'fs';
 
 const router = Router();
@@ -49,8 +48,11 @@ router.get("/:id/view", async (req, res) => {
             return res.status(404).json({ message: 'File not found' });
         }
 
-        const file = `${os.tmpdir()}/${doc.name}`;
-        return res.download(file);
+        return res.download(doc.path, doc.name, (err) => {
+            if (err) {
+                return res.status(500).json({ message: err.message });
+            }
+        });
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -60,6 +62,7 @@ router.post("/", authMiddleware, uploadMiddleware, async (req, res) => {
     try {
         const result = await Document.create({
             name: req.file.originalname,
+            path: req.file.path,
             owner: req.user.id,
             type: req.body.type
         })

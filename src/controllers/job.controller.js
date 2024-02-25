@@ -96,6 +96,13 @@ export class JobController {
     }
 
     /**
+     * @param {number} userId
+     */
+    async getMyApplications(userId) {
+        return (await this.jobService.getMyApplications(userId));
+    }
+
+    /**
      * 
      * @param {number} userId  
      * @param {number} id 
@@ -139,7 +146,7 @@ export class JobController {
     */
     async updateApplication(jobId, appId, body) {
         const job = await this.jobService.getJob(jobId);
-        if ((!job || job.status !== 'accepting')
+        if ((!job)
         ) return null;
 
         const status = body.status;

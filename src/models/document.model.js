@@ -29,6 +29,10 @@ export const Document = database.sequelize.define('Document', {
         type: DataTypes.ENUM('CV', 'CL', 'OTHER'),
         allowNull: false,
         defaultValue: 'OTHER'
+    },
+    path: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     tableName: 'documents',

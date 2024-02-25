@@ -34,10 +34,9 @@ export class JobService {
             }
 
             where[option[0]] = {
-                [option[0]]: Where(fn('LOWER', col(option[0])), 'LIKE', `%${option[1].toLowerCase()}%`).comparator,
+                [Op.iLike]: `%${option[1]}%`
             }
         }
-
 
         const jobs = await this.job.findAll({
             limit: query?.limit ?? 100,
@@ -126,16 +125,59 @@ export class JobService {
     }
 
     /**
+     * @param {number} userId
+     */
+    async getMyApplications(userId) {
+        return (await this.applications.findAll({
+            where: {
+                applicant: userId
+            },
+            include: [
+                {
+                    model: Job,
+                    include: [
+                        {
+                            model: User,
+                            as: 'employer'
+                        }
+                    ]
+                }
+            ]
+        })).map((app) => app.dataValues);
+    }
+
+    /**
      * 
      * @param {*} _ 
      * @param {*} jobId 
-     * @param {QueryOptions} queryOptions 
+     * @param {{}} query 
      * @returns 
      */
-    async getJobApplications(jobId, queryOptions = null) {
+    async getJobApplications(jobId, query = null) {
+        let where = {};
+
+        const kv = Object.entries(query);
+
+        for (var option of kv) {
+            if (option[0] === 'rating') continue;
+            if (option[0] === 'limit' || option[0] === 'offset') continue;
+
+            if (option[0] === 'dateApplied') {
+                where[createdAt] = {
+                    [Op.gte]: new Date(option[1])
+                }
+                continue;
+            }
+
+            where[option[0]] = {
+                [Op.iLike]: `%${option[1]}%`
+            }
+        }
+
         let result = await this.applications.findAll({
             where: {
-                job: jobId
+                job: jobId,
+                ...where
             },
             include: [
                 {
@@ -147,12 +189,17 @@ export class JobService {
                 },
                 {
                     model: Feedback,
-                    as: 'feedbacks'
+                    as: 'feedbacks',
                 }
             ]
         });
 
-        return result.map((app) => app.dataValues);
+        return result.map((app) => app.dataValues).filter((app) => {
+            if (query.rating) {
+                return app.feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / app.feedbacks.length >= query.rating;
+            }
+            return true;
+        })
     }
 
     /**
@@ -183,7 +230,9 @@ export class JobService {
     }
 
     async updateApplication(appId, status) {
-        return (await this.applications.update(status, {
+        return (await this.applications.update({
+            status: status
+        }, {
             where: {
                 id: appId
             }

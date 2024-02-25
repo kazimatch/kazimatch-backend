@@ -1,5 +1,5 @@
 import { User } from "../models/index.js";
-import { UserService, EducationService, SkillsService, LanguageService, ExperienceService, DocumentService } from "../services/index.js";
+import { UserService, EducationService, SkillsService, LanguageService, ExperienceService, DocumentService, FeedbackService } from "../services/index.js";
 export class UserController {
 
     constructor() {
@@ -302,6 +302,12 @@ export class UserController {
 
     async deleteUserDocument(userId, documentId) {
         return (await this.documentService.deleteDocument(userId, documentId));
+    }
+
+    // Feedback
+    // Get all user feedbacks
+    async getUserFeedbacks(id) {
+        return (await FeedbackService.getUserFeedback(id));
     }
 
 }
