@@ -23,7 +23,7 @@ const init = async () => {
             .use(express.urlencoded({ extended: true }))
 
         config.ENV === 'development' ? app.use(morgan('dev')) : null;
-        app.use(`/api/${config.VERSION}`, router);
+        app.use(`/${config.VERSION}`, router);
 
         const server = app.listen(config.PORT, () => {
             console.log("Server running on PORT", config.PORT)
