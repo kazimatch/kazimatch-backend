@@ -91,6 +91,11 @@ Application.hasOne(User, {
     as: "user"
 })
 
+User.hasMany(Feedback, {
+    foreignKey: "userId",
+    as: "feedbacks"
+})
+
 // User.hasMany(Thread, {
 //     foreignKey: "partyA",
 //     as: "sender"

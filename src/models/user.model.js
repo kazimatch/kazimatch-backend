@@ -60,7 +60,7 @@ export const User = database.sequelize.define('User', {
     },
     gender: {
         type: DataTypes.STRING,
-        values: ['male', 'female', 'non-binary'],
+        values: ['male', 'female', 'none'],
         allowNull: true
     },
     dob: {

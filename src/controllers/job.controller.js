@@ -24,7 +24,6 @@ export class JobController {
      * @returns {Promise<object[]>}
      */
     async getAllJobs(query = null) {
-
         return (await this.jobService.getAll(query));
     }
 

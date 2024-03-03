@@ -1,5 +1,5 @@
 import { Job, Application, User, Feedback } from "../models/index.js";
-import { Op, fn, col, where as Where } from "sequelize";
+import { Op, fn, col, where as Where, literal } from "sequelize";
 /**
  * @typedef {Object} QueryOptions
  * @property {number?} limit
@@ -9,242 +9,294 @@ import { Op, fn, col, where as Where } from "sequelize";
  */
 
 export class JobService {
-    constructor() {
-        this.job = Job;
-        this.applications = Application;
-    }
-    /**
-     * 
-     * @param {QueryOptions?} query 
-     * @returns 
-     */
-    async getAll(query = null) {
-        let where = {};
+  constructor() {
+    this.job = Job;
+    this.applications = Application;
+  }
+  /**
+   *
+   * @param {QueryOptions?} query
+   * @returns
+   */
+  async getAll(query = null) {
+    let where = {};
 
-        const kv = Object.entries(query);
+    const kv = Object.entries(query);
 
-        for (var option of kv) {
-            if (option[0] === 'limit' || option[0] === 'offset') continue;
+    for (var option of kv) {
+      if (option[0] === "limit" || option[0] === "offset") continue;
 
-            if (option[0] === 'start' || option[0] == 'end') {
-                where[option[0]] = {
-                    [Op.lte]: new Date(option[1])
-                }
-                continue;
-            }
+      if (option[0] === "date") {
+        where["createdAt"] = {
+          [Op.gte]: new Date(option[1]),
+        };
+        continue;
+      }
 
-            where[option[0]] = {
-                [Op.iLike]: `%${option[1]}%`
-            }
-        }
+      if (option[0] === "rating") continue;
 
-        const jobs = await this.job.findAll({
-            limit: query?.limit ?? 100,
-            offset: query?.offset ?? 0,
-            where: kv.length ? {
-                [Op.or]: where
-            } : null,
-            order: query?.orderBy,
-            include: [
-                {
-                    model: User,
-                    as: 'employer'
-                }
-            ]
-        });
-        return jobs?.map((job) => job.dataValues);
+      where[option[0]] = {
+        [Op.iLike]: `%${option[1]}%`,
+      };
     }
 
-    async getJob(id) {
-        return (await this.job.findOne({
-            where: {
-                id
+    const jobs = await this.job.findAll({
+      limit: query?.limit ?? 100,
+      offset: query?.offset ?? 0,
+      where: Object.keys(where).length
+        ? {
+            [Op.or]: where,
+          }
+        : null,
+      order: query?.orderBy,
+
+      include: [
+        {
+          model: User,
+          as: "employer",
+          attributes: {
+            exclude: ["password"],
+          },
+          include: [
+            {
+              model: Feedback,
+              as: "feedbacks",
             },
-            include: [
-                {
-                    model: Application,
-                    as: "applications"
-                },
-                {
-                    model: User,
-                    as: 'employer'
-                }
-            ]
-        }))?.dataValues;
-    }
+          ],
+        },
+      ],
+    });
 
-    /**
-     * 
-     * @param {number} userId 
-     * @param {QueryOptions?} query 
-     * @returns 
-     */
-    async getUserJobs(userId, query = null) {
-        const jobs = await this.job.findAll({
-            where: {
-                ...query?.where,
-                owner: userId,
-            },
-            limit: query?.limit ?? 100,
-            offset: query?.offset ?? 0,
-            include: [
-                {
-                    model: Application,
-                    as: "applications"
-                },
-                {
-                    model: User,
-                    as: 'employer'
-                }
-            ]
+    let result = jobs.map((job) => {
+      if (!query.rating) return job.dataValues;
+      const avgRate =
+        job.dataValues.employer.feedbacks.reduce(
+          (acc, curr) => acc + curr.rating,
+          0
+        ) / job.dataValues.employer.feedbacks.length;
+
+      if ((avgRate || 0) >= query.rating) {
+        return job.dataValues;
+      }
+      return null;
+    });
+
+    return result.filter(Boolean);
+  }
+
+  async getJob(id) {
+    return (
+      await this.job.findOne({
+        where: {
+          id,
+        },
+        include: [
+          {
+            model: Application,
+            as: "applications",
+          },
+          {
+            model: User,
+            as: "employer",
+          },
+        ],
+      })
+    )?.dataValues;
+  }
+
+  /**
+   *
+   * @param {number} userId
+   * @param {QueryOptions?} query
+   * @returns
+   */
+  async getUserJobs(userId, query = null) {
+    const jobs = await this.job.findAll({
+      where: {
+        ...query?.where,
+        owner: userId,
+      },
+      limit: query?.limit ?? 100,
+      offset: query?.offset ?? 0,
+      include: [
+        {
+          model: Application,
+          as: "applications",
+        },
+        {
+          model: User,
+          as: "employer",
+        },
+      ],
+    });
+
+    return jobs.map((job) => job?.dataValues);
+  }
+
+  async addJob(body) {
+    return (await this.job.create(body)).dataValues;
+  }
+
+  async updateJob(userId, id, body) {
+    return (
+      (
+        await this.job.update(body, {
+          where: {
+            id,
+            owner: userId,
+          },
         })
+      ).length > 0
+    );
+  }
 
-        return jobs.map((job) => job?.dataValues);
-    }
+  async deleteJob(userId, id) {
+    return await this.job.destroy({
+      where: {
+        id,
+        owner: userId,
+      },
+    });
+  }
 
-    async addJob(body) {
-        return (await this.job.create(body)).dataValues
-    }
-
-    async updateJob(userId, id, body) {
-        return (await this.job.update(body, {
-            where: {
-                id,
-                owner: userId
-            }
-        })).length > 0;
-    }
-
-    async deleteJob(userId, id) {
-        return (await this.job.destroy({
-            where: {
-                id,
-                owner: userId
-            }
-        }))
-    }
-
-    /**
-     * @param {number} userId
-     */
-    async getMyApplications(userId) {
-        return (await this.applications.findAll({
-            where: {
-                applicant: userId
-            },
+  /**
+   * @param {number} userId
+   */
+  async getMyApplications(userId) {
+    return (
+      await this.applications.findAll({
+        where: {
+          applicant: userId,
+        },
+        include: [
+          {
+            model: Job,
             include: [
-                {
-                    model: Job,
-                    include: [
-                        {
-                            model: User,
-                            as: 'employer'
-                        }
-                    ]
-                }
-            ]
-        })).map((app) => app.dataValues);
+              {
+                model: User,
+                as: "employer",
+              },
+            ],
+          },
+        ],
+      })
+    ).map((app) => app.dataValues);
+  }
+
+  /**
+   *
+   * @param {*} _
+   * @param {*} jobId
+   * @param {{}} query
+   * @returns
+   */
+  async getJobApplications(jobId, query = null) {
+    let where = {};
+
+    const kv = Object.entries(query);
+
+    for (var option of kv) {
+      if (option[0] === "rating") continue;
+      if (option[0] === "limit" || option[0] === "offset") continue;
+
+      if (option[0] === "dateApplied") {
+        where[createdAt] = {
+          [Op.gte]: new Date(option[1]),
+        };
+        continue;
+      }
+
+      where[option[0]] = {
+        [Op.iLike]: `%${option[1]}%`,
+      };
     }
 
-    /**
-     * 
-     * @param {*} _ 
-     * @param {*} jobId 
-     * @param {{}} query 
-     * @returns 
-     */
-    async getJobApplications(jobId, query = null) {
-        let where = {};
+    let result = await this.applications.findAll({
+      where: {
+        job: jobId,
+        ...where,
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+        },
+        {
+          model: Job,
+        },
+        {
+          model: Feedback,
+          as: "feedbacks",
+        },
+      ],
+    });
 
-        const kv = Object.entries(query);
-
-        for (var option of kv) {
-            if (option[0] === 'rating') continue;
-            if (option[0] === 'limit' || option[0] === 'offset') continue;
-
-            if (option[0] === 'dateApplied') {
-                where[createdAt] = {
-                    [Op.gte]: new Date(option[1])
-                }
-                continue;
-            }
-
-            where[option[0]] = {
-                [Op.iLike]: `%${option[1]}%`
-            }
+    return result
+      .map((app) => app.dataValues)
+      .filter((app) => {
+        if (query.rating) {
+          return (
+            app.feedbacks.reduce((acc, curr) => acc + curr.rating, 0) /
+              app.feedbacks.length >=
+            query.rating
+          );
         }
+        return true;
+      });
+  }
 
-        let result = await this.applications.findAll({
+  /**
+   * @param {number} applicationId
+   * @returns
+   */
+  async getJobApplication(applicationId) {
+    let result = await this.applications.findOne({
+      where: {
+        id: applicationId,
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+        },
+        {
+          model: Job,
+        },
+      ],
+    });
+
+    return result?.dataValues;
+  }
+
+  async addJobApplication(body) {
+    return (await this.applications.create(body)).dataValues;
+  }
+
+  async updateApplication(appId, status) {
+    return (
+      (
+        await this.applications.update(
+          {
+            status: status,
+          },
+          {
             where: {
-                job: jobId,
-                ...where
+              id: appId,
             },
-            include: [
-                {
-                    model: User,
-                    as: 'user'
-                },
-                {
-                    model: Job,
-                },
-                {
-                    model: Feedback,
-                    as: 'feedbacks',
-                }
-            ]
-        });
+          }
+        )
+      ).length > 0
+    );
+  }
 
-        return result.map((app) => app.dataValues).filter((app) => {
-            if (query.rating) {
-                return app.feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / app.feedbacks.length >= query.rating;
-            }
-            return true;
-        })
-    }
-
-    /**
-    * @param {number} applicationId
-    * @returns 
-    */
-    async getJobApplication(applicationId) {
-        let result = await this.applications.findOne({
-            where: {
-                id: applicationId
-            },
-            include: [
-                {
-                    model: User,
-                    as: 'user'
-                },
-                {
-                    model: Job,
-                }
-            ]
-        });
-
-        return result?.dataValues;
-    }
-
-    async addJobApplication(body) {
-        return (await this.applications.create(body)).dataValues
-    }
-
-    async updateApplication(appId, status) {
-        return (await this.applications.update({
-            status: status
-        }, {
-            where: {
-                id: appId
-            }
-        })).length > 0;
-    }
-
-    async deleteApplication(userId, appId) {
-        return (await this.applications.destroy({
-            where: {
-                id: appId,
-                applicant: userId
-            }
-        })) > 0;
-    }
+  async deleteApplication(userId, appId) {
+    return (
+      (await this.applications.destroy({
+        where: {
+          id: appId,
+          applicant: userId,
+        },
+      })) > 0
+    );
+  }
 }
