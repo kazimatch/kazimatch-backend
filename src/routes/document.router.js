@@ -74,7 +74,7 @@ router.post("/", authMiddleware, uploadMiddleware, async (req, res) => {
         const id = result.dataValues.id;
 
         await result.update({
-            url: config.App.baseUrl + '/api/' + config.VERSION + '/files/' + id + '/view'
+            url: config.App.baseUrl + '/' + config.VERSION + '/files/' + id + '/view'
         })
 
         return res.status(201).json(result.dataValues);

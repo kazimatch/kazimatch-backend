@@ -33,6 +33,28 @@ export class JobService {
         continue;
       }
 
+      if (option[0] === "query") {
+        // match title or description
+        where[Op.or] = [
+          {
+            title: {
+              [Op.iLike]: `%${option[1]}%`,
+            },
+          },
+          {
+            description: {
+              [Op.iLike]: `%${option[1]}%`,
+            },
+          },
+          {
+            location: {
+              [Op.iLike]: `%${option[1]}%`,
+            },
+          },
+        ];
+        continue;
+      }
+
       if (option[0] === "rating") continue;
 
       where[option[0]] = {
@@ -43,11 +65,9 @@ export class JobService {
     const jobs = await this.job.findAll({
       limit: query?.limit ?? 100,
       offset: query?.offset ?? 0,
-      where: Object.keys(where).length
-        ? {
-            [Op.or]: where,
-          }
-        : null,
+      where: {
+        [Op.or]: where,
+      },
       order: query?.orderBy,
 
       include: [

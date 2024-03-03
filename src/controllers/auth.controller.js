@@ -56,7 +56,7 @@ export class AuthController {
             html: emailTemplate({
                 name: user.fullName,
                 message: "Welcome to KaziMatch. Please verify your email address to continue",
-                link: `${config.App.baseUrl}/api/${config.VERSION}/auth/verify?token=${token}`,
+                link: `${config.App.baseUrl}/${config.VERSION}/auth/verify?token=${token}`,
                 type: "Verify",
                 sign: "If you did not create an account, DO NOT click this link"
             })
@@ -115,7 +115,7 @@ export class AuthController {
         QueueService.queue("email", {
             to: user.email,
             subject: "Reset your password",
-            html: `Click <a href="${config.App.baseUrl}/api/${config.VERSION}/auth/reset-password?token=${token}">here</a> to reset your password`
+            html: `Click <a href="${config.App.baseUrl}/${config.VERSION}/auth/reset?token=${token}">here</a> to reset your password`
         })
 
         return true;
