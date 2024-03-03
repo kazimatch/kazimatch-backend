@@ -1,6 +1,6 @@
 {
   "name": "ros-auth",
-  "version": "0.2.25",
+  "version": "0.3.3",
   "description": "KaziMatch API",
   "main": "src/index.js",
   "type": "module",

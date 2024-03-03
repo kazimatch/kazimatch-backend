@@ -1,5 +1,6 @@
 import { Job, Application, User, Feedback } from "../models/index.js";
 import { Op, fn, col, where as Where, literal } from "sequelize";
+
 /**
  * @typedef {Object} QueryOptions
  * @property {number?} limit
@@ -49,6 +50,22 @@ export class JobService {
           {
             location: {
               [Op.iLike]: `%${option[1]}%`,
+            },
+          },
+          {
+            category: {
+              [Op.iLike]: `%${option[1]}%`,
+            },
+          },
+          {
+            type: {
+              [Op.iLike]: `%${option[1]}%`,
+            },
+          },
+          {
+            skills: {
+              // skills an array, match any
+              [Op.contains]: [option[1]],
             },
           },
         ];
