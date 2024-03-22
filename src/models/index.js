@@ -12,89 +12,89 @@ import { Message } from "./message.model.js";
 import { Feedback } from "./feedback.model.js";
 import { Plan } from "./plan.model.js";
 import { Subscription } from "./subscription.model.js";
+import { Payment } from "./payments.model.js";
 
 User.hasMany(Education, {
-    foreignKey: "applicantId",
-    as: "educations"
+  foreignKey: "applicantId",
+  as: "educations",
 });
 
 Education.belongsTo(User, {
-    foreignKey: "applicantId",
+  foreignKey: "applicantId",
 });
 
 User.hasMany(Skill, {
-    foreignKey: "applicantId",
-    as: "skills"
+  foreignKey: "applicantId",
+  as: "skills",
 });
 
 Skill.belongsTo(User, {
-    foreignKey: "applicantId",
+  foreignKey: "applicantId",
 });
 
 User.hasMany(Experience, {
-    foreignKey: "applicantId",
-    as: "experiences"
+  foreignKey: "applicantId",
+  as: "experiences",
 });
 
 Experience.belongsTo(User, {
-    foreignKey: "applicantId",
+  foreignKey: "applicantId",
 });
 
 User.hasMany(Language, {
-    foreignKey: "applicantId",
-    as: "languages"
+  foreignKey: "applicantId",
+  as: "languages",
 });
 
 Language.belongsTo(User, {
-    foreignKey: "applicantId",
+  foreignKey: "applicantId",
 });
 
 User.hasMany(Document, {
-    foreignKey: "owner",
-    as: "documents"
+  foreignKey: "owner",
+  as: "documents",
 });
 
 Document.belongsTo(User, {
-    foreignKey: "owner",
+  foreignKey: "owner",
 });
 
 Job.hasOne(User, {
-    sourceKey: "owner",
-    foreignKey: "id",
-    as: "employer"
+  sourceKey: "owner",
+  foreignKey: "id",
+  as: "employer",
 });
 
 User.hasMany(Job, {
-    sourceKey: "id",
-    foreignKey: "owner",
-    as: "jobs"
+  sourceKey: "id",
+  foreignKey: "owner",
+  as: "jobs",
 });
 
 Job.hasMany(Application, {
-    foreignKey: "job",
-    as: "applications"
+  foreignKey: "job",
+  as: "applications",
 });
 
 Application.belongsTo(Job, {
-    foreignKey: "job",
+  foreignKey: "job",
 });
 
 User.hasMany(Application, {
-    foreignKey: "applicant",
-    as: "applications"
+  foreignKey: "applicant",
+  as: "applications",
 });
 
-
 Application.hasOne(User, {
-    sourceKey: "applicant",
-    foreignKey: "id",
-    as: "user"
-})
+  sourceKey: "applicant",
+  foreignKey: "id",
+  as: "user",
+});
 
 User.hasMany(Feedback, {
-    foreignKey: "userId",
-    as: "feedbacks"
-})
+  foreignKey: "userId",
+  as: "feedbacks",
+});
 
 // User.hasMany(Thread, {
 //     foreignKey: "partyA",
@@ -107,53 +107,70 @@ User.hasMany(Feedback, {
 // });
 
 Thread.hasOne(User, {
-    sourceKey: "partyA",
-    foreignKey: "id",
-    as: "sender"
+  sourceKey: "partyA",
+  foreignKey: "id",
+  as: "sender",
 });
 
 Thread.hasOne(User, {
-    sourceKey: "partyB",
-    foreignKey: "id",
-    as: "receiver"
+  sourceKey: "partyB",
+  foreignKey: "id",
+  as: "receiver",
 });
 
 Thread.hasMany(Message, {
-    foreignKey: "threadId",
-    as: "messages"
+  foreignKey: "threadId",
+  as: "messages",
 });
 
 Feedback.hasOne(User, {
-    sourceKey: "employerId",
-    foreignKey: "id",
-    as: "employer"
-})
+  sourceKey: "employerId",
+  foreignKey: "id",
+  as: "employer",
+});
 
 Feedback.hasOne(User, {
-    sourceKey: "userId",
-    foreignKey: "id",
-    as: "user"
+  sourceKey: "userId",
+  foreignKey: "id",
+  as: "user",
 });
 
 Application.hasMany(Feedback, {
-    sourceKey: "applicant",
-    foreignKey: "userId",
-    as: "feedbacks"
+  sourceKey: "applicant",
+  foreignKey: "userId",
+  as: "feedbacks",
+});
+
+User.hasMany(Payment, {
+  foreignKey: "applicantId",
+  as: "payments",
+});
+
+Payment.hasOne(User, {
+  sourceKey: "applicantId",
+  foreignKey: "id",
+  as: "user",
+});
+
+User.hasOne(Subscription, {
+  foreignKey: "applicantId",
+  as: "subscription",
 });
 
 export {
-    User,
-    Notification,
-    Education,
-    Experience,
-    Skill,
-    Language,
-    Document,
-    Job,
-    Application,
-    Message,
-    Thread,
-    Feedback,
-    Plan,
-    Subscription
-}
+  User,
+  Notification,
+  Education,
+  Experience,
+  Skill,
+  Language,
+  Document,
+  Job,
+  Application,
+  Message,
+  Thread,
+  Feedback,
+  Plan,
+  Subscription,
+  Payment,
+};

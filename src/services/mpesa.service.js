@@ -19,11 +19,16 @@ export class MpesaService {
         `${config.Mpesa.consumerKey}:${config.Mpesa.consumerSecret}`
       );
 
+      console.log("Basic: ", basic);
+
       const response = await fetch(url, {
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Basic ${basic}`,
         },
       });
+
+      console.log("Response: ", response.status);
 
       if (!response.ok) return null;
 
@@ -45,6 +50,7 @@ export class MpesaService {
   async stk(phone, amount) {
     try {
       const token = await this.#oauth();
+      console.log("Token: ", token);
       if (!token) return null;
 
       const url = `${this.baseUrl}/mpesa/stkpush/v1/processrequest`;

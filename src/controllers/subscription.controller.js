@@ -1,99 +1,119 @@
-import { MpesaService, SubscriptionService, UserService } from "../services/index.js";
+import {
+  MpesaService,
+  SubscriptionService,
+  UserService,
+} from "../services/index.js";
 
 export class SubscriptionController {
-    constructor() {
-        this.mpesaService = new MpesaService();
-        this.subscriptionService = new SubscriptionService();
-        this.userService = new UserService();
+  constructor() {
+    this.mpesaService = new MpesaService();
+    this.subscriptionService = new SubscriptionService();
+    this.userService = new UserService();
+  }
+
+  async createSubscription(userId, data) {
+    const user = await this.userService.getById(userId);
+
+    const plan = await this.subscriptionService.getPlan(data.planId);
+    if (!plan) return null;
+
+    let phone = user.phoneNumber;
+
+    if (phone.startsWith("0")) {
+      phone = `254${phone.slice(1)}`;
     }
 
-    async createSubscription(userId, data) {
-        const user = await this.userService.getById(userId);
+    const mpesaResponse = await this.mpesaService.stk(phone, plan.price);
 
-        console.log(user)
+    console.log(mpesaResponse);
 
-        const plan = await this.subscriptionService.getPlan(data.planId);
-        if (!plan) return null;
+    await this.subscriptionService.createPayment({
+      requestId: mpesaResponse?.MerchantRequestID,
+      status: "pending",
+      applicantId: user.id,
+      planId: plan.id,
+    });
 
-        let phone = user.phoneNumber;
+    if (mpesaResponse?.ResponseCode != "0") return null;
 
-        if (phone.startsWith('0')) {
-            phone = `254${phone.slice(1)}`;
-        }
+    const subscription = await this.subscriptionService.createSubscription({
+      applicantId: user.id,
+      planId: plan.id,
+      requestId: mpesaResponse.MerchantRequestID,
+    });
 
-        const mpesaResponse = await this.mpesaService.stk(phone, plan.price);
+    return subscription;
+  }
 
-        console.log("The mpesa response", mpesaResponse);
-        if (mpesaResponse?.ResponseCode != '0') return null;
+  async getUserSubscription(userId) {
+    const subscription = await this.subscriptionService.getUserSubscription(
+      userId
+    );
+    return subscription;
+  }
 
-        const subscription = await this.subscriptionService.createSubscription({
-            applicantId: user.id,
-            planId: plan.id,
-            requestId: mpesaResponse.MerchantRequestID,
-        });
+  async getSubscriptions() {
+    const subscriptions = await this.subscriptionService.getSubscriptions();
+    return subscriptions;
+  }
 
-        return subscription;
-    }
+  async updateSubscription(requestId, data) {
+    if (data.ResultCode != 0) return;
 
-    async getUserSubscription(userId) {
-        const subscription = await this.subscriptionService.getUserSubscription(userId);
-        return subscription;
-    }
+    await this.subscriptionService.updatePayment(requestId, {
+      status: "success",
+    });
 
-    async getSubscriptions() {
-        const subscriptions = await this.subscriptionService.getSubscriptions();
-        return subscriptions;
-    }
+    let subscription =
+      await this.subscriptionService.getSubscriptionByRequestId(requestId);
+    if (!subscription) return;
 
-    async updateSubscription(requestId, data) {
-        if (data.ResultCode != 0) return;
+    subscription = {
+      ...subscription,
+      plan: subscription.plan.dataValues,
+    };
 
-        let subscription = await this.subscriptionService.getSubscriptionByRequestId(requestId);
-        if (!subscription) return;
+    this.userService.update(subscription.applicantId, {
+      isActivated: true,
+    });
 
-        subscription = {
-            ...subscription,
-            plan: subscription.plan.dataValues
-        }
+    data.status = "active";
+    data.startDate = new Date();
 
-        this.userService.update(subscription.applicantId, {
-            isActivated: true
-        });
+    data.endDate =
+      subscription.plan.cycle == "monthly"
+        ? new Date(data.startDate.setMonth(data.startDate.getMonth() + 1))
+        : new Date(
+            data.startDate.setFullYear(data.startDate.getFullYear() + 1)
+          );
 
-        data.status = 'active';
-        data.startDate = new Date();
+    return await this.subscriptionService.updateSubscription(requestId, data);
+  }
 
-        data.endDate = subscription.plan.cycle == 'monthly' ?
-            new Date(data.startDate.setMonth(data.startDate.getMonth() + 1)) :
-            new Date(data.startDate.setFullYear(data.startDate.getFullYear() + 1));
+  async deleteSubscription(userId) {
+    return await this.subscriptionService.deleteSubscription(userId);
+  }
 
-        return (await this.subscriptionService.updateSubscription(requestId, data));
-    }
+  async createPlan(data) {
+    const plan = await this.subscriptionService.createPlan(data);
+    return plan;
+  }
 
-    async deleteSubscription(userId) {
-        return (await this.subscriptionService.deleteSubscription(userId));
-    }
+  async getPlan(id) {
+    const plan = await this.subscriptionService.getPlan(id);
+    return plan;
+  }
 
-    async createPlan(data) {
-        const plan = await this.subscriptionService.createPlan(data);
-        return plan;
-    }
+  async getPlans() {
+    const plans = await this.subscriptionService.getPlans();
+    return plans;
+  }
 
-    async getPlan(id) {
-        const plan = await this.subscriptionService.getPlan(id);
-        return plan;
-    }
+  async updatePlan(id, data) {
+    return await this.subscriptionService.updatePlan(id, data);
+  }
 
-    async getPlans() {
-        const plans = await this.subscriptionService.getPlans();
-        return plans;
-    }
-
-    async updatePlan(id, data) {
-        return (await this.subscriptionService.updatePlan(id, data));
-    }
-
-    async deletePlan(id) {
-        return (await this.subscriptionService.deletePlan(id));
-    }
+  async deletePlan(id) {
+    return await this.subscriptionService.deletePlan(id);
+  }
 }
