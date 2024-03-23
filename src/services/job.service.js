@@ -137,6 +137,11 @@ export class JobService {
             },
           ],
         },
+        {
+          model: User,
+          as: "employer",
+          exclude: ["password"],
+        },
       ],
     });
 
