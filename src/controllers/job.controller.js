@@ -10,6 +10,16 @@ export class JobController {
 
   /**
    *
+   * @param {number} userId
+   *
+   * @returns {Promise<object[]>}
+   */
+  async getTalentPool(userId) {
+    return await this.jobService.getTalentPool(userId);
+  }
+
+  /**
+   *
    * @param {number} id
    *
    * @returns {Promise<object>}

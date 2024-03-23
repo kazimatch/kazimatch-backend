@@ -121,6 +121,28 @@ export class JobService {
     return result.filter(Boolean);
   }
 
+  async getTalentPool(userId) {
+    const jobs = await this.job.findAll({
+      where: {
+        owner: userId,
+      },
+      include: [
+        {
+          model: Application,
+          as: "applications",
+          include: [
+            {
+              model: User,
+              as: "user",
+            },
+          ],
+        },
+      ],
+    });
+
+    return jobs.map((job) => job.dataValues);
+  }
+
   async getJob(id) {
     return (
       await this.job.findOne({
