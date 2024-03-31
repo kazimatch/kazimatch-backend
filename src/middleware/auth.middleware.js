@@ -61,7 +61,7 @@ const adminMiddleware = (req, res, next) => {
  */
 const recruiterMiddleware = (req, res, next) => {
     const role = req.user.role;
-    if (role === 'admin' || role == 'recruiter') {
+    if (role === 'admin' || role == 'recruiter' || role == 'employer') {
         next()
         return;
     }

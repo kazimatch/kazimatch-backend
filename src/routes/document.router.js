@@ -25,7 +25,6 @@ router.get("/:id", authMiddleware, async (req, res) => {
         const doc = await Document.findOne({
             where: {
                 id: req.params.id,
-                owner: req.user.id
             }
         })
         if (!doc) {

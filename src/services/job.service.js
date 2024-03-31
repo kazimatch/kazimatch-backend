@@ -1,4 +1,4 @@
-import { Job, Application, User, Feedback } from "../models/index.js";
+import { Job, Application, User, Feedback, Document } from "../models/index.js";
 import { Op, fn, col, where as Where, literal } from "sequelize";
 
 /**
@@ -29,13 +29,12 @@ export class JobService {
 
       if (option[0] === "date") {
         where["createdAt"] = {
-          [Op.gte]: new Date(option[1]),
+          [Op.gte]: option[1],
         };
         continue;
       }
 
       if (option[0] === "query") {
-        // match title or description
         where[Op.or] = [
           {
             title: {
