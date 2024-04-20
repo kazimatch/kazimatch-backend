@@ -67,11 +67,24 @@ export class JobService {
               [Op.contains]: [option[1]],
             },
           },
+          {
+            experience: {
+              [Op.iLike]: `%${option[1]}%`,
+            }
+          },
+
+          // find also in employer full name in user table
+          {
+            '$employer.fullName$': {
+              [Op.iLike]: `%${option[1]}%`,
+            },
+          },
         ];
         continue;
       }
 
       if (option[0] === "rating") continue;
+
 
       where[option[0]] = {
         [Op.iLike]: `%${option[1]}%`,
@@ -85,9 +98,9 @@ export class JobService {
         [Op.or]: where,
       },
       order: query?.orderBy,
-
       include: [
         {
+          required: true,
           model: User,
           as: "employer",
           attributes: {
@@ -125,6 +138,7 @@ export class JobService {
       where: {
         owner: userId,
       },
+      subQuery: false,
       include: [
         {
           model: Application,
@@ -140,6 +154,7 @@ export class JobService {
           model: User,
           as: "employer",
           exclude: ["password"],
+          required: true,
         },
       ],
     });
@@ -197,6 +212,7 @@ export class JobService {
   }
 
   async addJob(body) {
+    body.close = new Date(Date.now() + body.close * (24 * 60 * 60 * 1000))
     return (await this.job.create(body)).dataValues;
   }
 
@@ -300,7 +316,7 @@ export class JobService {
         if (query.rating) {
           return (
             app.feedbacks.reduce((acc, curr) => acc + curr.rating, 0) /
-              app.feedbacks.length >=
+            app.feedbacks.length >=
             query.rating
           );
         }

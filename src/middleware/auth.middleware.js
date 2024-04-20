@@ -66,6 +66,8 @@ const recruiterMiddleware = (req, res, next) => {
         return;
     }
 
+    console.log("Role", role)
+
     return res.status(403).send({
         message: "Forbidden",
     });

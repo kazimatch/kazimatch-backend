@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
   try {
     res.json(await jobController.getAllJobs(req.query));
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 });

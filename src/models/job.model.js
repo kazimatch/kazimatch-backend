@@ -42,11 +42,11 @@ export const Job = database.sequelize.define(
     },
     start: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
     },
     end: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
     },
     salary: {
       type: DataTypes.INTEGER,
@@ -77,6 +77,10 @@ export const Job = database.sequelize.define(
       defaultValue: false,
       allowNull: false,
     },
+    close: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    }
   },
   {
     tableName: "jobs",
