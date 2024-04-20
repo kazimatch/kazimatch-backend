@@ -49,7 +49,7 @@ export const Job = database.sequelize.define(
       allowNull: true,
     },
     salary: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     skills: {
