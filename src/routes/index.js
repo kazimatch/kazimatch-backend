@@ -40,4 +40,13 @@ router.get('/', (req, res) => {
     res.send('Welcome to KaziMatch API');
 });
 
+router.get('/privacy-policy', (req, res) => {
+
+    res.sendFile('public/privacy-policy.html', { root: './' });
+});
+router.get('/delete-acc', (req, res) => {
+
+    res.sendFile('public/delete-account.html', { root: './' });
+});
+
 export default router;
