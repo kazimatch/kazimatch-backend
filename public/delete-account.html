@@ -96,7 +96,7 @@
             form.querySelector('input[type="submit"]').value = "Submitting...";
 
             // post to https://api.kazimatch.com/v1/delete-account
-            const res = await fetch('http://localhost:3000/v1/delete-acc', {
+            const res = await fetch('https://api.kazimatch.com/v1/delete-acc', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
