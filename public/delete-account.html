@@ -94,6 +94,8 @@
 
             // change the submit button text to "Submitting..."
             form.querySelector('input[type="submit"]').value = "Submitting...";
+            
+            const baseUrl  =window.location.origin;
 
             // post to https://api.kazimatch.com/v1/delete-account
             const res = await fetch('https://api.kazimatch.com/v1/delete-acc', {

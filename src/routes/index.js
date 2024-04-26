@@ -54,6 +54,7 @@ router.get('/delete-acc', (req, res) => {
 router.post('/delete-acc', async (req, res) => {
     try {
         const client = createClient();
+        await client.connect();
         const email = req.body.email;
 
         client.set(email, email, {
