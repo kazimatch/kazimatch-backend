@@ -28,6 +28,7 @@
         }
 
         form {
+            min-width: 250px;
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
@@ -60,30 +61,65 @@
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
+        #message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
     <!-- Account Deletion Request -->
-    <h1>Account Deletion Request</h1>
-    <p>Fill out the form below to request the deletion of your account.</p>
-    <form action="#">
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
+    <div>
+        <h1>Account Deletion Request</h1>
+        <p>Fill out the form below to request the deletion of your account.</p>
+        <form action="#">
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
 
-        <input type="submit" value="Submit">
-    </form>
-    <p>By submitting this form, you agree to the deletion of your account and all associated data.</p>
+            <input type="submit" value="Submit">
 
+            <div id="message"></div>
+        </form>
+
+        <p>By submitting this form, you agree to the deletion of your account and all associated data.</p>
+    </div>
     <script>
-        // Open Email Client with Pre-filled Email
         const form = document.querySelector('form');
-        form.addEventListener('submit', (event) => {
+        form.addEventListener('submit', async (event) => {
             event.preventDefault();
-            const email = document.querySelector('#email').value;
-            const subject = 'Account Deletion Request';
-            const body = `Email: ${email}`;
-            window.location.href = `mailto:kazimatch@gmail.com?subject=${subject}&body=${body}`;
+
+            // change the submit button text to "Submitting..."
+            form.querySelector('input[type="submit"]').value = "Submitting...";
+
+            // post to https://api.kazimatch.com/v1/delete-account
+            const res = await fetch('http://localhost:3000/v1/delete-acc', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: form.querySelector('input[type="email"]').value
+                })
+            })
+
+            if (res.ok) {
+                form.querySelector('#message').style.backgroundColor = 'green';
+                form.querySelector('#message').style.color = 'white';
+
+                form.querySelector('input[type="submit"]').value = "Submitted";
+                form.querySelector('input[type="submit"]').disabled = true;
+                form.querySelector('#message').textContent = "Your account deletion request has been submitted. You will receive an email confirmation shortly.";
+            } else {
+                form.querySelector('#message').style.backgroundColor = 'red';
+                form.querySelector('#message').style.color = 'white';
+
+                form.querySelector('input[type="submit"]').value = "Submit";
+                form.querySelector('#message').textContent = "An error occurred. Please try again.";
+            }
         });
 
     </script>

@@ -10,7 +10,9 @@ import adminRouter from './admin.router.js';
 import documentRouter from './document.router.js';
 import { adminMiddleware, authMiddleware } from '../middleware/auth.middleware.js';
 
-import { NotificationService } from '../services/notification.service.js';
+import { NotificationService, QueueService } from '../services/index.js';
+
+import { createClient } from 'redis';
 
 const router = Router();
 router.use('/auth', authRouter);
@@ -47,6 +49,36 @@ router.get('/privacy-policy', (req, res) => {
 router.get('/delete-acc', (req, res) => {
 
     res.sendFile('public/delete-account.html', { root: './' });
+});
+
+router.post('/delete-acc', async (req, res) => {
+    try {
+        const client = createClient();
+        const email = req.body.email;
+
+        client.set(email, email, {
+            EX: 432000
+        });
+
+        // send email to user
+        QueueService.queue("email", {
+            to: email,
+            subject: "KaziMatch Account Deletion",
+            html: `
+            <h1>Account Deletion Request</h1>
+            <p>
+            Hello, we have received your account deletion request, it will be automatically deleted 
+            within 5 days. If you did not request this or you want to cancel the request, send an email to
+           <strong> kazimatch@gmail.com </strong>
+            </p> 
+            `
+        });
+
+        return res.status(200).json({ message: 'Account deletion request received' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'An error occurred while deleting account' });
+    }
 });
 
 export default router;
