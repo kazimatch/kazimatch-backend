@@ -5,8 +5,9 @@ import chalk from 'chalk';
 export class Database {
 
     constructor() {
-        this.sequelize = new Sequelize(`${config.DB.dialect}://${config.DB.username}:${config.DB.password}@${config.DB.host}:${config.DB.port}/${config.DB.database}`, {
+        this.sequelize = new Sequelize(process.env.KOYEB, {
             logging: false,
+            ssl: true,
         })
     }
 

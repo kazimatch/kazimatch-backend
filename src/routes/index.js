@@ -13,6 +13,7 @@ import { adminMiddleware, authMiddleware } from '../middleware/auth.middleware.j
 import { NotificationService, QueueService } from '../services/index.js';
 
 import { createClient } from 'redis';
+import { config } from '../config/index.js'
 
 const router = Router();
 router.use('/auth', authRouter);
@@ -53,7 +54,15 @@ router.get('/delete-acc', (req, res) => {
 
 router.post('/delete-acc', async (req, res) => {
     try {
-        const client = createClient();
+        const client = createClient({
+            password: config.Redis.password,
+            username: config.Redis.username,
+            socket: {
+                host: config.Redis.host,
+                port: config.Redis.port
+            },
+            database: 'Brian-free-db'
+        });
         await client.connect();
         const email = req.body.email;
 

@@ -8,6 +8,8 @@ export class QueueService {
         connection: {
             host: config.Redis.host,
             port: config.Redis.port,
+            username: config.Redis.username,
+            password: config.Redis.password,
         }
     });
 
