@@ -15,7 +15,7 @@ const init = async () => {
         db = await database.connect().then(async (db) => await db?.sync());
         if (!db) return;
 
-        QueueService.init();
+       // QueueService.init();
 
         const app = express();
         app.use(cors())
