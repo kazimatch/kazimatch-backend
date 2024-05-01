@@ -47,6 +47,6 @@ export class QueueService {
      * @param {Function?} handler;
      */
     static queue(type, data) {
-        this.bull.add(type, data)
+        this.bull?.add(type, data)
     }
 }
