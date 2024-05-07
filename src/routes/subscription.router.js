@@ -27,9 +27,7 @@ router.post("/callback", async (req, res) => {
             return res.status(200).json({ message: "Bad request" });
         }
 
-        const subscription = await subscriptionController.updateSubscription(MerchantRequestID, {
-            status: "active",
-        });
+        const subscription = await subscriptionController.updateSubscription(MerchantRequestID);
 
         if (!subscription) {
             return res.status(200).json({ message: "Bad request" });

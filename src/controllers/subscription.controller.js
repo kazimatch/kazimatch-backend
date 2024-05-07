@@ -57,9 +57,9 @@ export class SubscriptionController {
     return subscriptions;
   }
 
-  async updateSubscription(requestId, data) {
-    if (data.ResultCode != 0) return;
-
+  async updateSubscription(requestId) {
+    let data = {};
+    
     await this.subscriptionService.updatePayment(requestId, {
       status: "success",
     });
