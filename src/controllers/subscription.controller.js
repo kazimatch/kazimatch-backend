@@ -23,7 +23,7 @@ export class SubscriptionController {
       phone = `254${phone.slice(1)}`;
     }
 
-    const mpesaResponse = await this.mpesaService.stk(phone, plan.price);
+    const mpesaResponse = await this.mpesaService.stk(phone, plan.price, user.id, plan.dataValues.name);
 
     console.log(mpesaResponse);
 
@@ -84,8 +84,8 @@ export class SubscriptionController {
       subscription.plan.cycle == "monthly"
         ? new Date(data.startDate.setMonth(data.startDate.getMonth() + 1))
         : new Date(
-            data.startDate.setFullYear(data.startDate.getFullYear() + 1)
-          );
+          data.startDate.setFullYear(data.startDate.getFullYear() + 1)
+        );
 
     return await this.subscriptionService.updateSubscription(requestId, data);
   }

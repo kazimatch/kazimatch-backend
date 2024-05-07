@@ -17,12 +17,24 @@ router.post("/", authMiddleware, async (req, res) => {
     }
 });
 
-router.post("/callback", async (req, res) => { 
+router.post("/callback", async (req, res) => {
     try {
-        const subscription = await subscriptionController.updateSubscription(req.body.Body.stkCallback);
-        if (!subscription) {
-            return res.status(400).json({ message: "Bad request" });
+        const { MerchantRequestID, ResultCode } = req.body.Body.stkCallback;
+
+        console.log(req.body.Body.stkCallback);
+
+        if (ResultCode !== 0) {
+            return res.status(200).json({ message: "Bad request" });
         }
+
+        const subscription = await subscriptionController.updateSubscription(MerchantRequestID, {
+            status: "active",
+        });
+
+        if (!subscription) {
+            return res.status(200).json({ message: "Bad request" });
+        }
+
         return res.status(201).json(subscription);
     } catch (err) {
         return res.status(500).json({ error: err.message });

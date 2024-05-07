@@ -5,7 +5,10 @@ import chalk from 'chalk';
 export class Database {
 
     constructor() {
-        this.sequelize = new Sequelize(process.env.KOYEB, {
+
+        const connectionSttring = `postgres://${config.DB.username}:${config.DB.password}@${config.DB.host}:${config.DB.port}/${config.DB.database}`
+
+        this.sequelize = new Sequelize(connectionSttring, {
             logging: false,
             ssl: true,
         })
