@@ -23,7 +23,7 @@ router.post("/callback", async (req, res) => {
 
         console.log(req.body.Body.stkCallback);
 
-        if (ResultCode !== 0) {
+        if (ResultCode != 0) {
             return res.status(200).json({ message: "Bad request" });
         }
 
