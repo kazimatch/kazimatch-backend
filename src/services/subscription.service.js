@@ -61,7 +61,7 @@ export class SubscriptionService {
       (
         await this.subscription.update(data, {
           where: {
-            requestId: id,
+            requestId: requestId,
           },
         })
       ).length > 0
