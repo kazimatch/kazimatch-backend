@@ -13,6 +13,7 @@ import { Feedback } from "./feedback.model.js";
 import { Plan } from "./plan.model.js";
 import { Subscription } from "./subscription.model.js";
 import { Payment } from "./payments.model.js";
+import { Referral } from "./referral.model.js";
 
 User.hasMany(Education, {
   foreignKey: "applicantId",
@@ -96,6 +97,46 @@ User.hasMany(Feedback, {
   as: "feedbacks",
 });
 
+Subscription.hasOne(Plan, {
+  sourceKey: "planId",
+  foreignKey: "id",
+  as: "plan",
+})
+
+User.hasMany(Subscription, {
+  foreignKey: "applicantId",
+  as: "subscriptions",
+})
+
+Subscription.hasOne(User, {
+  sourceKey: "applicantId",
+  foreignKey: "id",
+  as: "user",
+})
+
+Referral.hasOne(User, {
+  sourceKey: "from",
+  foreignKey: "id",
+  as: "referrer",
+})
+
+Referral.hasOne(User, {
+  sourceKey: "to",
+  foreignKey: "id",
+  as: "referee",
+})
+
+User.hasMany(Referral, {
+  foreignKey: "from",
+  as: "referrals",
+})
+
+User.hasMany(Referral, {
+  foreignKey: "to",
+  as: "referees",
+})
+
+
 // User.hasMany(Thread, {
 //     foreignKey: "partyA",
 //     as: "sender"
@@ -173,4 +214,5 @@ export {
   Plan,
   Subscription,
   Payment,
+  Referral,
 };

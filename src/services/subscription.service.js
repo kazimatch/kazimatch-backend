@@ -1,4 +1,4 @@
-import { Subscription, Plan, Payment } from "../models/index.js";
+import { Subscription, Plan, Payment, User } from "../models/index.js";
 
 export class SubscriptionService {
   constructor() {
@@ -43,10 +43,13 @@ export class SubscriptionService {
       where: {
         requestId,
       },
-      include: {
+      include: [{
         model: Plan,
         as: "plan",
-      },
+      }, {
+        model: User,
+        as: 'user'
+      }],
     });
     return subscription?.dataValues;
   }

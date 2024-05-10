@@ -8,7 +8,7 @@ export class Database {
 
         const connectionSttring = `postgres://${config.DB.username}:${config.DB.password}@${config.DB.host}:${config.DB.port}/${config.DB.database}`
 
-        this.sequelize = new Sequelize(process.env.KOYEB, {
+        this.sequelize = new Sequelize(config.ENV === 'production' ? process.env.KOYEB : connectionSttring, {
             logging: false,
             ssl: true,
         })

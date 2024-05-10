@@ -206,6 +206,7 @@ export class JobService {
           as: "employer",
         },
       ],
+      order: query?.orderBy ?? [["createdAt", "DESC"]]
     });
 
     return jobs.map((job) => job?.dataValues);

@@ -297,4 +297,68 @@ router.get("/me/jobs", authMiddleware, async (req, res) => {
     }
 });
 
+
+// 8. Referrals
+router.get("/me/referrals", authMiddleware, async (req, res) => {
+    try {
+        const referrals = await userController.getUserReferrals(req.user.id);
+        return res.json(referrals);
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+})
+
+router.get("/me/referees", authMiddleware, async (req, res) => {
+    try {
+        const referrals = await userController.getUserReferees(req.user.id);
+        return res.json(referrals);
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+})
+
+router.post("/me/referrals", authMiddleware, async (req, res) => {
+    try {
+        const referrals = await userController.addUserReferral(req.user.id, req.body);
+        if (!referrals) return res.status(400).send({ message: "Couldn't create the resource" });
+
+        return res.status(201).json(referrals);
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+});
+
+router.patch("/me/referrals/:id", authMiddleware, async (req, res) => {
+    try {
+        const referral = await userController.updateReferral(req.user.id, req.params.id, req.body);
+        if (!referral) return res.status(404).send({ message: "Resource not found" });
+        return res.json(referral);
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+});
+
+// 9. Notifications
+
+router.get("/me/notifications", authMiddleware, async (req, res) => {
+    try {
+        const notifications = await userController.getUserNotifications(req.user.id);
+        return res.json(notifications);
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+});
+
+router.patch("/me/notifications/:id", authMiddleware, async (req, res) => {
+    try {
+        const notification = await userController.updateUserNotification(req.user.id, req.params.id, req.body);
+        if (!notification) return res.status(404).send({ message: "Resource not found" });
+        return res.json(notification);
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).send({ message: error.message });
+    }
+})
+
 export default router;

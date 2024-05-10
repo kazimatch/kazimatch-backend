@@ -1,5 +1,5 @@
 import { User } from "../models/index.js";
-import { UserService, EducationService, SkillsService, LanguageService, ExperienceService, DocumentService, FeedbackService } from "../services/index.js";
+import { UserService, EducationService, SkillsService, LanguageService, ExperienceService, DocumentService, FeedbackService, QueueService, NotificationService } from "../services/index.js";
 export class UserController {
 
     constructor() {
@@ -308,6 +308,79 @@ export class UserController {
     // Get all user feedbacks
     async getUserFeedbacks(id) {
         return (await FeedbackService.getUserFeedback(id));
+    }
+
+
+    // Referral
+    // Get all user referrals
+    async getUserReferrals(id) {
+        return (await this.userService.getUserReferrals(id));
+    }
+
+    async getUserReferees(id) {
+        return (await this.userService.getRefereeReferrals(id));
+    }
+
+    // Add a new referral to the user
+    async addUserReferral(id, body) {
+        console.log(body);
+
+        const user = await this.userService.getById(id);
+        if (!user) return null;
+
+        const response = await this.userService.addUserReferral(id, body);
+        if (!response.user) return null;
+
+        // construct user has requested you to be their referree download the app and login with the following credentials
+        // to confirm the referral. 
+        const htmlTemplate = response.isNewUser ? `
+            <p>Hi ${response.user.fullName},</p>
+            <p>${user.fullName} has requested you to be their referree. Download the Kazi Match from the <a href="">Play Store</a> and login with the following credentials to confirm the referral.</p>
+            <p>Email: ${response.user.email}</p>
+            <p>Password: ${response.password}</p>
+            <p>Thanks</p>
+        ` : `
+            <p>Hi ${response.user.fullName},</p>
+            <p>${user.fullName} has requested you to be their referree. Login to your Kazi Match account to confirm the referral.</p>
+            <p>Thanks</p>
+        `;
+
+        // send email to user
+        QueueService.queue("email", {
+            to: response.user.email,
+            subject: "Kazi Match Referral",
+            html: htmlTemplate
+        })
+
+        return response;
+    }
+
+    async updateReferral(userId, id, body) {
+        const user = await this.userService.getById(userId);
+        if (!user) return null;
+
+        const referral = await this.userService.getReferralById(id);
+        if (!referral) return null;
+
+        if (referral.to !== userId) return null;
+
+        return await this.userService.updateReferral(id, body);
+    }
+
+    // Notification
+    // Get all user notifications
+    async getUserNotifications(id) {
+        return (await NotificationService.getNotifications(id));
+    }
+
+    // Update a user notification
+    async updateUserNotification(userId, notificationId, body) {
+        const notification = await NotificationService.getNotification(notificationId); 
+        if (!notification) return null;
+
+        if (notification.recipient !== userId) return null;
+
+        return await NotificationService.updateNotification(notificationId, body);
     }
 
 }

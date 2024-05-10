@@ -57,12 +57,7 @@ let temporaryStorage = {};
 router.post('/delete-acc', async (req, res) => {
     try {
         const client = createClient({
-            password: config.Redis.password,
-            username: config.Redis.username,
-            socket: {
-                host: config.Redis.host,
-                port: config.Redis.port
-            }
+            url: 'rediss://default:AVNS_5TJsKRHoDMNo3JeVkoF@redis-kazimatch-kazimatch.d.aivencloud.com:13866',
         });
         await client.connect();
         const email = req.body.email;

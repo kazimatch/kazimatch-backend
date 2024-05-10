@@ -84,6 +84,10 @@ export const User = database.sequelize.define('User', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
+    referredBy: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 }, {
     tableName: 'users',
     paranoid: true,

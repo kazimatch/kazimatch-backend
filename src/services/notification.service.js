@@ -47,7 +47,24 @@ export class NotificationService {
         return await Notification.findAll({
             where: {
                 recipient: userId
+            },
+            order: [
+                ['createdAt', 'DESC']
+            ]
+        });
+    }
+
+    static async getNotification(id) {
+        return (await Notification.findByPk(id))?.dataValues;
+
+    }
+
+    static async updateNotification(id, body) {
+        return await Notification.update(body, {
+            where: {
+                id
             }
         });
     }
+
 }

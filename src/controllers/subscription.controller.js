@@ -1,8 +1,11 @@
+import moment from "moment";
 import {
   MpesaService,
+  QueueService,
   SubscriptionService,
   UserService,
 } from "../services/index.js";
+import { emailTemplate } from "../utils/template.js";
 
 export class SubscriptionController {
   constructor() {
@@ -59,7 +62,7 @@ export class SubscriptionController {
 
   async updateSubscription(requestId) {
     let data = {};
-    
+
     await this.subscriptionService.updatePayment(requestId, {
       status: "success",
     });
@@ -71,6 +74,7 @@ export class SubscriptionController {
     subscription = {
       ...subscription,
       plan: subscription.plan.dataValues,
+      user: subscription.user.dataValues
     };
 
     this.userService.update(subscription.applicantId, {
@@ -82,10 +86,17 @@ export class SubscriptionController {
 
     data.endDate =
       subscription.plan.cycle == "monthly"
-        ? new Date(data.startDate.setMonth(data.startDate.getMonth() + 1))
-        : new Date(
-          data.startDate.setFullYear(data.startDate.getFullYear() + 1)
-        );
+        ? moment().add(1, "months").toDate()
+        : moment().add(1, "years").toDate();
+
+    QueueService.queue("email", {
+      to: subscription.user.email,
+      subject: "Subscription activated",
+      html: emailTemplate({
+        name: subscription.user.fullName,
+        message: "Hello, your subscription has been activated successfully",
+      })
+    });
 
     return await this.subscriptionService.updateSubscription(requestId, data);
   }
