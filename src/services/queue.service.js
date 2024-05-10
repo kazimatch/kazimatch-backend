@@ -12,7 +12,8 @@ export class QueueService {
         try {
             this.bull = new Queue('queue', {
                 connection: {
-                    host: config.Redis.host
+                    host: config.Redis.host,
+                    port: 6379s,
                 }
             });
 
