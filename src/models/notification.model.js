@@ -34,9 +34,17 @@ export const Notification = database.sequelize.define('Notification', {
     },
     action: {
         type: DataTypes.STRING,
-        values: ['account', 'message', 'feedback'],
+        values: ['account', 'message', 'feedback', 'referral'],
         defaultValue: 'account',
         allowNull: false
+    },
+    resourceType: {
+        type: DataTypes.ENUM('user', 'job', 'application', 'thread', 'message', 'feedback', 'referral'),
+        allowNull: true
+    },
+    resourceId: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     }
 }, {
     tableName: 'notifications'

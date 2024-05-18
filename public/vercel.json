@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/delete-acc", "destination": "/delete-account.html" },
+    { "source": "/privacy-policy", "destination": "/privacy-policy.html" }
+  ]
+}

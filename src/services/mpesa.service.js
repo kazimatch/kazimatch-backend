@@ -13,22 +13,18 @@ export class MpesaService {
    */
   async #oauth() {
     try {
-      const url = `${this.baseUrl}/oauth/v1/generate?grant_type=client_credentials`;
+      const url = `https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials`;
 
-      const basic = btoa(
-        `${config.Mpesa.consumerKey}:${config.Mpesa.consumerSecret}`
+      const basic = Buffer.from(`${config.Mpesa.consumerKey}:${config.Mpesa.consumerSecret}`).toString(
+        "base64"
       );
 
-      console.log("Basic: ", basic);
-
       const response = await fetch(url, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${basic}`,
+          Authorization: `Basic ${basic}`
         },
       });
-
-      console.log("Response: ", response.status);
 
       if (!response.ok) return null;
 
@@ -47,41 +43,38 @@ export class MpesaService {
    *
    * @returns {Promise<Object?>}
    */
-  async stk(phone, amount) {
+  async stk(phone, amount, accountId, plan) {
     try {
       const token = await this.#oauth();
-      console.log("Token: ", token);
       if (!token) return null;
 
-      const url = `${this.baseUrl}/mpesa/stkpush/v1/processrequest`;
 
       const date = new Date();
-      const year = date.getFullYear();
-      const month = ("0" + date.getMonth() + 1).slice(-2);
-      const day = date.getDate();
-      const hours = ("0" + date.getHours()).slice(-2);
-      const minutes = ("0" + date.getMinutes()).slice(-2);
-      const seconds = ("0" + date.getSeconds()).slice(-2);
-      const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
+      const timestamp = date.getFullYear() +
+        ("0" + (date.getMonth() + 1)).slice(-2) +
+        ("0" + date.getDate()).slice(-2) +
+        ("0" + date.getHours()).slice(-2) +
+        ("0" + date.getMinutes()).slice(-2) +
+        ("0" + date.getSeconds()).slice(-2);
 
-      const callbackUrl = `${config.App.baseUrl}/v1/subscriptions/callback`;
+      const callbackUrl = `https://api.kazimatch.com/v1/subscriptions/callback`;
+      const url = `https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest`;
 
-      console.log("Callback: ", callbackUrl);
+      const password = `${config.Mpesa.shortCode}${config.Mpesa.passKey}${timestamp}`;
+      const encodedPassword = Buffer.from(password).toString("base64");
 
       const data = {
         BusinessShortCode: config.Mpesa.shortCode,
-        Password: btoa(
-          `${config.Mpesa.shortCode}${config.Mpesa.passKey}${timestamp}`
-        ),
+        Password: encodedPassword,
         Timestamp: timestamp,
-        TransactionType: "CustomerBuyGoodsOnline",
-        Amount: amount,
+        TransactionType: "CustomerPayBillOnline",
+        Amount: amount.toString(),
         PartyA: phone,
         PartyB: config.Mpesa.shortCode,
         PhoneNumber: phone,
         CallBackURL: callbackUrl,
-        AccountReference: "KaziMatch Payment",
-        TransactionDesc: "KaziMatch Payment",
+        AccountReference: `${accountId}-${plan}`,
+        TransactionDesc: "Subscription",
       };
 
       const response = await fetch(url, {
@@ -93,12 +86,11 @@ export class MpesaService {
         },
       });
 
-      console.log("Phone Number: ", phone);
-      console.log("Callback: ", callbackUrl);
-
       if (!response.ok) return null;
 
-      return await response.json();
+      const json = await response.json();
+
+      return json;
     } catch (err) {
       console.log(err);
       return null;

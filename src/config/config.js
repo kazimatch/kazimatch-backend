@@ -39,7 +39,7 @@ const config = {
     baseUrl:
       process.env.NODE_ENV === "production"
         ? process.env.APP_URL
-        : `http://localhost:${process.env.PORT}`,
+        : `https://api.kazimatch.com`,
   },
   Pushy: {
     key: process.env.PUSHY_KEY,

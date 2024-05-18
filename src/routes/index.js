@@ -56,16 +56,13 @@ let temporaryStorage = {};
 
 router.post('/delete-acc', async (req, res) => {
     try {
-        // const client = createClient({
-        //     password: config.Redis.password,
-        //     username: config.Redis.username,
-        //     socket: {
-        //         host: config.Redis.host,
-        //         port: config.Redis.port
-        //     },
-        //     database: 'Brian-free-db'
-        // });
-        // await client.connect();
+        const client = createClient({
+            socket: {
+                host: config.Redis.host,
+                port: config.Redis.port
+            }
+        });
+        await client.connect();
         const email = req.body.email;
 
         if (!email) {
@@ -78,23 +75,23 @@ router.post('/delete-acc', async (req, res) => {
 
         temporaryStorage[email] = true;
 
-        // client.set(email, email, {
-        //     EX: 432000
-        // });
+        client.set(email, email, {
+            EX: 432000
+        });
 
         // send email to user
-        // QueueService.queue("email", {
-        //     to: email,
-        //     subject: "KaziMatch Account Deletion",
-        //     html: `
-        //     <h1>Account Deletion Request</h1>
-        //     <p>
-        //     Hello, we have received your account deletion request, it will be automatically deleted 
-        //     within 5 days. If you did not request this or you want to cancel the request, send an email to
-        //    <strong> kazimatch@gmail.com </strong>
-        //     </p> 
-        //     `
-        // });
+        QueueService.queue("email", {
+            to: email,
+            subject: "KaziMatch Account Deletion",
+            html: `
+            <h1>Account Deletion Request</h1>
+            <p>
+            Hello, we have received your account deletion request, it will be automatically deleted 
+            within 5 days. If you did not request this or you want to cancel the request, send an email to
+           <strong> kazimatch@gmail.com </strong>
+            </p> 
+            `
+        });
 
         return res.status(200).json({ message: 'Account deletion request received' });
     } catch (err) {
