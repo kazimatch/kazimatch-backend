@@ -4,10 +4,10 @@ import { User } from "./user.model.js";
 
 export const Education = database.sequelize.define('Education', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     type: {
         type: DataTypes.STRING,
@@ -35,7 +35,7 @@ export const Education = database.sequelize.define('Education', {
         allowNull: false
     },
     applicantId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,

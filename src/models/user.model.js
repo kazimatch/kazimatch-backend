@@ -1,21 +1,20 @@
 import { database } from "../config/index.js";
 import { DataTypes } from "sequelize";
-import { Experience, Document, Language, Education, Notification } from "./index.js";
 
 export const User = database.sequelize.define('User', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
+        defaultValue: DataTypes.UUIDV4,
         allowNull: false,
     },
     fullName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     email: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: true
     },
     password: {
@@ -36,7 +35,7 @@ export const User = database.sequelize.define('User', {
     isActivated: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: true
     },
     refreshToken: {
         type: DataTypes.STRING,
@@ -52,7 +51,7 @@ export const User = database.sequelize.define('User', {
     },
     phoneNumber: {
         type: DataTypes.STRING,
-        allowNull: true
+        allowNull: false
     },
     location: {
         type: DataTypes.STRING,
@@ -88,8 +87,12 @@ export const User = database.sequelize.define('User', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
+    shouldUpdate: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
 }, {
     tableName: 'users',
-    paranoid: true,
 });
 

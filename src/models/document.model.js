@@ -4,10 +4,10 @@ import { User } from "./user.model.js";
 
 export const Document = database.sequelize.define('Document', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     name: {
         type: DataTypes.STRING,
@@ -18,7 +18,7 @@ export const Document = database.sequelize.define('Document', {
         allowNull: true
     },
     owner: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,

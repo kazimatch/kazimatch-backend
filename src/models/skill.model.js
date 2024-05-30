@@ -3,10 +3,10 @@ import { DataTypes } from "sequelize";
 
 export const Skill = database.sequelize.define('Skill', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     name: {
         type: DataTypes.STRING,
@@ -17,7 +17,7 @@ export const Skill = database.sequelize.define('Skill', {
         allowNull: false,
     },
     applicantId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: 'users',

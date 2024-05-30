@@ -3,9 +3,83 @@ import { UserService, QueueService } from "../services/index.js";
 import { hashPassword, jwtToken, verifyToken } from "../utils/crypt.js";
 import { config } from "../config/config.js";
 import { emailTemplate } from "../utils/template.js";
+import tw from "twilio";
 export class AuthController {
     constructor() {
         this.userService = new UserService();
+        this.client = tw(config.TWILIO.accountSid, config.TWILIO.authToken);
+    }
+
+    /**
+     * Send otp to phone number
+     * @param {*} phone 
+     * @returns 
+     */
+    async sendOtp(phone) {
+        let user = await this.userService.getByPhone(phone);
+        if (!user) {
+            user = await this.userService.create({
+                phoneNumber: phone,
+                shouldUpdate: true
+            })
+        }
+
+        // send otp
+        const twRes = await this.client.verify.v2
+            .services(config.TWILIO.serviceId)
+            .verifications
+            .create({
+                to: `+${phone}`,
+                channel: "sms"
+            });
+
+        return twRes;
+    }
+
+    /**
+     * Verify otp
+     * @param {*} phone
+     * @param {*} code
+     * @returns 
+     */
+
+    async verifyOtp(phone, code) {
+        const twRes = await this.client.verify.v2
+            .services(config.TWILIO.serviceId)
+            .verificationChecks
+            .create({
+                to: `+${phone}`,
+                code
+            });
+
+        if (twRes.status !== 'approved') throw new Error("Invalid code");
+
+        const user = await this.userService.getByPhone(phone);
+        const token = jwtToken(user);
+        const refreshToken = jwtToken(user, true);
+        await this.userService.update(user.id, { refreshToken });
+
+        user.token = token;
+        user.refreshToken = refreshToken;
+
+        return user;
+    }
+
+    async deleteAccount(phone, code) {
+        const twRes = await this.client.verify.v2
+            .services(config.TWILIO.serviceId)
+            .verificationChecks
+            .create({
+                to: `+${phone}`,
+                code
+            });
+
+        if (twRes.status !== 'approved') throw new Error("Invalid code");
+
+        const user = await this.userService.getByPhone(phone);
+        if (!user) throw new Error("User not found");
+
+        return (await this.userService.delete(user.id)) > 0;
     }
 
     /**
@@ -32,6 +106,7 @@ export class AuthController {
         delete user.password;
 
         return user;
+
     }
     /**
      * 

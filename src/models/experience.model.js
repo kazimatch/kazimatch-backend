@@ -4,10 +4,10 @@ import { User } from "./user.model.js";
 
 export const Experience = database.sequelize.define('Experience', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     company: {
         type: DataTypes.STRING,
@@ -30,7 +30,7 @@ export const Experience = database.sequelize.define('Experience', {
         allowNull: false
     },
     applicantId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,

@@ -4,13 +4,13 @@ import { User } from "./index.js";
 
 export const Thread = database.sequelize.define('Thread', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     partyA: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,
@@ -18,7 +18,7 @@ export const Thread = database.sequelize.define('Thread', {
         }
     },
     partyB: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,

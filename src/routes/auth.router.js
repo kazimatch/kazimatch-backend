@@ -16,6 +16,26 @@ import chalk from "chalk";
 const router = Router();
 const authController = new AuthController();
 
+router.post('/send-otp', async (req, res) => {
+  try {
+    const response = await authController.sendOtp(req.body.phone);
+    return res.status(200).send(response);
+  } catch (error) {
+    console.log(chalk.red(error));
+    return res.status(500).send({ message: error.message });
+  }
+})
+
+router.post('/verify-otp', async (req, res) => {
+  try {
+    const response = await authController.verifyOtp(req.body.phone, req.body.code);
+    return res.status(200).send(response);
+  } catch (error) {
+    console.log(chalk.red(error));
+    return res.status(500).send({ message: error.message });
+  }
+})
+
 router.post(
   "/login",
   loginSchema,
