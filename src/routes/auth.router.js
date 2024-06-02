@@ -28,7 +28,7 @@ router.post('/send-otp', async (req, res) => {
 
 router.post('/verify-otp', async (req, res) => {
   try {
-    const response = await authController.verifyOtp(req.body.phone, req.body.code);
+    const response = await authController.verifyOtp(req.body.phone, req.body.code, req.body.delete);
     return res.status(200).send(response);
   } catch (error) {
     console.log(chalk.red(error));

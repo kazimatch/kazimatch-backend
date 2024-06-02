@@ -48,7 +48,10 @@ export class AuthController {
      * @returns 
      */
 
-    async verifyOtp(phone, code) {
+    async verifyOtp(phone, code, deleteAcc) {
+
+
+
         const twRes = await this.client.verify.v2
             .services(config.TWILIO.serviceId)
             .verificationChecks
@@ -60,6 +63,11 @@ export class AuthController {
         if (twRes.status !== 'approved') throw new Error("Invalid code");
 
         const user = await this.userService.getByPhone(phone);
+
+        if (deleteAcc) {
+            return (await this.userService.delete(user.id)) > 0;
+        }
+
         const token = jwtToken(user);
         const refreshToken = jwtToken(user, true);
         await this.userService.update(user.id, { refreshToken });
