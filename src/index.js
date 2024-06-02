@@ -18,7 +18,11 @@ const init = async () => {
         QueueService.init();
 
         const app = express();
-        app.use(cors())
+        app.use(cors({
+            origin: '*',
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization']
+        }))
             .use(express.json())
             .use(express.urlencoded({ extended: true }))
 
