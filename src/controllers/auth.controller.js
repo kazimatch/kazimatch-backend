@@ -15,10 +15,10 @@ export class AuthController {
      * @param {*} phone 
      * @returns 
      */
-    async sendOtp(phone, deleteAcc = false) {
+    async sendOtp(phone, deleteAcc) {
         let user = await this.userService.getByPhone(phone);
 
-        if (!user && !deleteAcc) {
+        if (!user && deleteAcc) {
             throw new Error("User not found");
         }
 

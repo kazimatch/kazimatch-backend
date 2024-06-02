@@ -18,7 +18,7 @@ const authController = new AuthController();
 
 router.post('/send-otp', async (req, res) => {
   try {
-    const response = await authController.sendOtp(req.body.phone);
+    const response = await authController.sendOtp(req.body.phone, req.body.delete);
     return res.status(200).send(response);
   } catch (error) {
     console.log(chalk.red(error));
