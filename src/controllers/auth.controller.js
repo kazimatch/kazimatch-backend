@@ -4,6 +4,7 @@ import { hashPassword, jwtToken, verifyToken } from "../utils/crypt.js";
 import { config } from "../config/config.js";
 import { emailTemplate } from "../utils/template.js";
 import tw from "twilio";
+import { redis, redisClient } from "../config/database.js"
 export class AuthController {
     constructor() {
         this.userService = new UserService();
@@ -12,19 +13,31 @@ export class AuthController {
 
     /**
      * Send otp to phone number
-     * @param {*} phone 
+     * @param {string} field
      * @returns 
      */
-    async sendOtp(phone, deleteAcc) {
-        let user = await this.userService.getByPhone(phone);
+    async sendOtp(field, deleteAcc) {
+        let user;
+
+        if (field.includes("@")) {
+            user = await this.userService.getByEmail(field);
+        } else {
+            user = await this.userService.getByPhone(field);
+        }
+
 
         if (!user && deleteAcc) {
             throw new Error("User not found");
         }
 
-        if (!user) {
+        if (!user && field.includes("@")) {
             user = await this.userService.create({
-                phoneNumber: phone,
+                email: field,
+                shouldUpdate: true
+            })
+        } else if (!user) {
+            user = await this.userService.create({
+                phoneNumber: field,
                 shouldUpdate: true
             })
         }
@@ -37,40 +50,68 @@ export class AuthController {
             }
         }
 
-        // send otp
-        const twRes = await this.client.verify.v2
-            .services(config.TWILIO.serviceId)
-            .verifications
-            .create({
-                to: `+${phone}`,
-                channel: "sms"
+        let twRes;
+
+        if (field.includes("@")) {
+            // generate 6 digit code
+            const code = `${Math.floor(100000 + Math.random() * 900000)}`;
+            //store in redis for 5 minutes
+            await (await redisClient()).setEx(field, 300, code);
+
+            // send email
+            QueueService.queue("email", {
+                to: user.email,
+                subject: "KaziMatch Account Verification",
+                html: `Your verification code is ${code}`
             });
+
+            twRes = { status: "approved" };
+        } else {
+            // send otp
+            twRes = await this.client.verify.v2
+                .services(config.TWILIO.serviceId)
+                .verifications
+                .create({
+                    to: `${field}`,
+                    channel: "sms"
+                });
+        }
 
         return twRes;
     }
 
     /**
      * Verify otp
-     * @param {*} phone
+     * @param {string} field
      * @param {*} code
      * @returns 
      */
 
-    async verifyOtp(phone, code, deleteAcc) {
+    async verifyOtp(field, code, deleteAcc) {
 
-        if (phone !== "+254714044855") {
-            const twRes = await this.client.verify.v2
-                .services(config.TWILIO.serviceId)
-                .verificationChecks
-                .create({
-                    to: `+${phone}`,
-                    code
-                });
+        if (field !== "+254714044855") {
+            if (field.includes("@")) {
+                const redisCode = await (await redisClient()).get(field);
+                if (redisCode !== code) throw new Error("Invalid code");
+            } else {
+                const twRes = await this.client.verify.v2
+                    .services(config.TWILIO.serviceId)
+                    .verificationChecks
+                    .create({
+                        to: `${field}`,
+                        code
+                    });
 
-            if (twRes.status !== 'approved') throw new Error("Invalid code");
+                if (twRes.status !== 'approved') throw new Error("Invalid code");
+            }
         }
 
-        const user = await this.userService.getByPhone(phone);
+        let user;
+        if (field.includes("@")) {
+            user = await this.userService.getByEmail(field);
+        } else {
+            user = await this.userService.getByPhone(field);
+        }
 
         if (deleteAcc) {
             return (await this.userService.delete(user.id)) > 0;
