@@ -51,7 +51,7 @@ export const User = database.sequelize.define('User', {
     },
     phoneNumber: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     location: {
         type: DataTypes.STRING,
@@ -94,5 +94,11 @@ export const User = database.sequelize.define('User', {
     },
 }, {
     tableName: 'users',
+});
+
+User.beforeCreate((user) => {
+    if (!user.email && !user.phoneNumber) {
+        throw new Error('Email or phone number is required');
+    }
 });
 

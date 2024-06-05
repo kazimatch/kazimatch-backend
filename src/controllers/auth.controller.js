@@ -4,7 +4,7 @@ import { hashPassword, jwtToken, verifyToken } from "../utils/crypt.js";
 import { config } from "../config/config.js";
 import { emailTemplate } from "../utils/template.js";
 import tw from "twilio";
-import { redis, redisClient } from "../config/database.js"
+import { redisClient } from "../config/database.js"
 export class AuthController {
     constructor() {
         this.userService = new UserService();
@@ -43,7 +43,7 @@ export class AuthController {
         }
 
         // testing number;
-        if (phone === "+254714044855") {
+        if (field === "+254714044855") {
             return {
                 "message": "Test Credentials",
                 "otp": "234567"
@@ -92,7 +92,10 @@ export class AuthController {
         if (field !== "+254714044855") {
             if (field.includes("@")) {
                 const redisCode = await (await redisClient()).get(field);
-                if (redisCode !== code) throw new Error("Invalid code");
+                if (redisCode !== code.toString()) {
+                    throw new Error("Invalid code");
+                };
+                await (await redisClient()).del(field);
             } else {
                 const twRes = await this.client.verify.v2
                     .services(config.TWILIO.serviceId)
