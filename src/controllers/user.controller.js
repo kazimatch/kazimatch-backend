@@ -35,16 +35,6 @@ export class UserController {
      * @returns {Promise<boolean>}
      */
     async updateUser(id, body, admin = false) {
-        if (!admin) {
-            // ------------------------------------------------------
-            // Remove role, organizations and groups from body. These properties are not allowed to be updated by the 'self' user
-            if (body.role) delete body.role;
-            if (body.organizations) delete body.organizations;
-            if (body.groups) delete body.groups;
-            if (body.password) delete body.password;
-            // ------------------------------------------------------
-        }
-
         return (await this.userService.update(id, body))[0] > 0;
     }
 
@@ -375,7 +365,7 @@ export class UserController {
 
     // Update a user notification
     async updateUserNotification(userId, notificationId, body) {
-        const notification = await NotificationService.getNotification(notificationId); 
+        const notification = await NotificationService.getNotification(notificationId);
         if (!notification) return null;
 
         if (notification.recipient !== userId) return null;
