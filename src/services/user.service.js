@@ -133,6 +133,16 @@ export class UserService {
             where: {
                 from: userId
             },
+            include: [
+                {
+                    model: User,
+                    as: 'referrer'
+                },
+                {
+                    model: User,
+                    as: 'referee'
+                },
+            ]
             ...attrs
         })).map(user => user.dataValues);
     }
