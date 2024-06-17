@@ -8,7 +8,11 @@ import { redisClient } from "../config/database.js"
 export class AuthController {
     constructor() {
         this.userService = new UserService();
-        this.client = tw(config.TWILIO.accountSid, config.TWILIO.authToken);
+        this.client = tw(config.TWILIO.accountSid, config.TWILIO.authToken, {
+            lazyLoading: true,
+            autoRetry: true,
+            maxRetries: 3
+        });
     }
 
     /**
@@ -68,12 +72,16 @@ export class AuthController {
             twRes = { status: "approved" };
         } else {
             // send otp
-            twRes = await this.client.verify.v2
+            await this.client.verify.v2
                 .services(config.TWILIO.serviceId)
                 .verifications
                 .create({
-                    to: `${field}`,
+                    to: `+${field}`,
                     channel: "sms"
+                }, (err, res) => {
+                    console.log(err, res);
+                    if (err) throw new Error("Failed to send otp");
+                    twRes = res;
                 });
         }
 
