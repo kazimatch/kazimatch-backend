@@ -20,8 +20,8 @@ const init = async () => {
 
         const app = express();
         app.use(cors({
-            origin: 'kazimatch.com',
-            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            origin: '*',
+            methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
             allowedHeaders: ['Content-Type', 'Authorization']
         }))
             .use(express.json())
