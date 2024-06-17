@@ -93,6 +93,16 @@ export class UserService {
         return user?.dataValues;
     }
 
+    async getByPhone(phoneNumber) {
+        const user = await this.user.findOne({
+            where: {
+                phoneNumber
+            },
+
+        });
+        return user?.dataValues;
+    }
+
     /**
      * @param {*} body 
      * @returns 

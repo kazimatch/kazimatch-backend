@@ -3,9 +3,156 @@ import { UserService, QueueService } from "../services/index.js";
 import { hashPassword, jwtToken, verifyToken } from "../utils/crypt.js";
 import { config } from "../config/config.js";
 import { emailTemplate } from "../utils/template.js";
+import tw from "twilio";
+import { redisClient } from "../config/database.js"
 export class AuthController {
     constructor() {
         this.userService = new UserService();
+        this.client = tw(config.TWILIO.accountSid, config.TWILIO.authToken, {
+            lazyLoading: true,
+            autoRetry: true,
+            maxRetries: 3
+        });
+    }
+
+    /**
+     * Send otp to phone number
+     * @param {string} field
+     * @returns 
+     */
+    async sendOtp(field, deleteAcc) {
+        let user;
+
+        if (field.includes("@")) {
+            user = await this.userService.getByEmail(field);
+        } else {
+            user = await this.userService.getByPhone(field);
+        }
+
+
+        if (!user && deleteAcc) {
+            throw new Error("User not found");
+        }
+
+        if (!user && field.includes("@")) {
+            user = await this.userService.create({
+                email: field,
+                shouldUpdate: true
+            })
+        } else if (!user) {
+            user = await this.userService.create({
+                phoneNumber: field,
+                shouldUpdate: true
+            })
+        }
+
+        // testing number;
+        if (field === "+254714044855") {
+            return {
+                "message": "Test Credentials",
+                "otp": "234567"
+            }
+        }
+
+        let twRes;
+
+        if (field.includes("@")) {
+            // generate 6 digit code
+            const code = `${Math.floor(100000 + Math.random() * 900000)}`;
+            //store in redis for 5 minutes
+            await (await redisClient()).setEx(field, 300, code);
+
+            // send email
+            QueueService.queue("email", {
+                to: user.email,
+                subject: "KaziMatch Account Verification",
+                html: `Your verification code is ${code}`
+            });
+
+            twRes = { status: "approved" };
+        } else {
+            // send otp
+            await this.client.verify.v2
+                .services(config.TWILIO.serviceId)
+                .verifications
+                .create({
+                    to: `+${field}`,
+                    channel: "sms"
+                }, (err, res) => {
+                    console.log(err, res);
+                    if (err) throw new Error("Failed to send otp");
+                    twRes = res;
+                });
+        }
+
+        return twRes;
+    }
+
+    /**
+     * Verify otp
+     * @param {string} field
+     * @param {*} code
+     * @returns 
+     */
+
+    async verifyOtp(field, code, deleteAcc) {
+
+        if (field !== "+254714044855") {
+            if (field.includes("@")) {
+                const redisCode = await (await redisClient()).get(field);
+                if (redisCode !== code.toString()) {
+                    throw new Error("Invalid code");
+                };
+                await (await redisClient()).del(field);
+            } else {
+                const twRes = await this.client.verify.v2
+                    .services(config.TWILIO.serviceId)
+                    .verificationChecks
+                    .create({
+                        to: `${field}`,
+                        code
+                    });
+
+                if (twRes.status !== 'approved') throw new Error("Invalid code");
+            }
+        }
+
+        let user;
+        if (field.includes("@")) {
+            user = await this.userService.getByEmail(field);
+        } else {
+            user = await this.userService.getByPhone(field);
+        }
+
+        if (deleteAcc) {
+            return (await this.userService.delete(user.id)) > 0;
+        }
+
+        const token = jwtToken(user);
+        const refreshToken = jwtToken(user, true);
+        await this.userService.update(user.id, { refreshToken });
+
+        user.token = token;
+        user.refreshToken = refreshToken;
+
+        return user;
+    }
+
+    async deleteAccount(phone, code) {
+        const twRes = await this.client.verify.v2
+            .services(config.TWILIO.serviceId)
+            .verificationChecks
+            .create({
+                to: `+${phone}`,
+                code
+            });
+
+        if (twRes.status !== 'approved') throw new Error("Invalid code");
+
+        const user = await this.userService.getByPhone(phone);
+        if (!user) throw new Error("User not found");
+
+        return (await this.userService.delete(user.id)) > 0;
     }
 
     /**
@@ -32,6 +179,7 @@ export class AuthController {
         delete user.password;
 
         return user;
+
     }
     /**
      * 

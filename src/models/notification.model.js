@@ -4,17 +4,17 @@ import { User } from "./user.model.js";
 
 export const Notification = database.sequelize.define('Notification', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     message: {
         type: DataTypes.STRING,
         allowNull: false
     },
     recipient: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,
@@ -43,7 +43,7 @@ export const Notification = database.sequelize.define('Notification', {
         allowNull: true
     },
     resourceId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: true
     }
 }, {

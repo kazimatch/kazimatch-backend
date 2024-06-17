@@ -2,6 +2,9 @@ import { Sequelize } from 'sequelize'
 import { config } from "./config.js";
 import chalk from 'chalk';
 
+// import redis
+import redis from 'redis';
+
 export class Database {
 
     constructor() {
@@ -47,3 +50,7 @@ export class Database {
         }
     }
 }
+
+export const redisClient = async () => await redis.createClient({
+
+}).connect()

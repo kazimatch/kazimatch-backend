@@ -78,6 +78,7 @@ export class JobController {
    */
   async addJob(userId, body) {
     body["owner"] = userId;
+    console.log(body);
     return await this.jobService.addJob(body);
   }
 

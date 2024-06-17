@@ -6,10 +6,10 @@ export const Job = database.sequelize.define(
   "Job",
   {
     id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
+      type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     title: {
       type: DataTypes.STRING,
@@ -28,7 +28,7 @@ export const Job = database.sequelize.define(
       allowNull: true,
     },
     owner: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: User,

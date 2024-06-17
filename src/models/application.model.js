@@ -4,13 +4,13 @@ import { User, Job } from "./index.js";
 
 export const Application = database.sequelize.define('Application', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     applicant: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,
@@ -18,7 +18,7 @@ export const Application = database.sequelize.define('Application', {
         }
     },
     job: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: Job,
@@ -32,11 +32,11 @@ export const Application = database.sequelize.define('Application', {
         defaultValue: 'pending'
     },
     resume: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: true
     },
     coverLetter: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: true
     },
     notes: {

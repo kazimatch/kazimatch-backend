@@ -4,13 +4,13 @@ import { Plan } from "./plan.model.js";
 
 export const Subscription = database.sequelize.define('Subscription', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     applicantId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: 'users',
@@ -18,7 +18,7 @@ export const Subscription = database.sequelize.define('Subscription', {
         }
     },
     planId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: Plan,

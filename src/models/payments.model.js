@@ -5,9 +5,9 @@ export const Payment = database.sequelize.define(
   "Payment",
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       primaryKey: true,
-      autoIncrement: true,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
     },
     requestId: {
@@ -20,11 +20,11 @@ export const Payment = database.sequelize.define(
       defaultValue: "pending",
     },
     applicantId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     planId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
   },

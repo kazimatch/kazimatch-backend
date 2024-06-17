@@ -4,10 +4,10 @@ import { User } from "./user.model.js";
 
 export const Feedback = database.sequelize.define('Feedback', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     feedback: {
         type: DataTypes.STRING,
@@ -18,7 +18,7 @@ export const Feedback = database.sequelize.define('Feedback', {
         allowNull: false
     },
     userId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,
@@ -26,7 +26,7 @@ export const Feedback = database.sequelize.define('Feedback', {
         }
     },
     employerId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,

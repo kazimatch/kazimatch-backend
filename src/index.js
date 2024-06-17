@@ -8,6 +8,7 @@ import router from "./routes/index.js";
 import { QueueService } from "./services/index.js";
 import { Server } from "socket.io";
 import { RealtimeService } from "./services/index.js";
+import { rateLimit } from "express-rate-limit";
 
 const init = async () => {
     var db;
@@ -18,11 +19,23 @@ const init = async () => {
         QueueService.init();
 
         const app = express();
-        app.use(cors())
+        app.use(cors({
+            origin: 'kazimatch.com',
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            allowedHeaders: ['Content-Type', 'Authorization']
+        }))
             .use(express.json())
             .use(express.urlencoded({ extended: true }))
 
         config.ENV === 'development' ? app.use(morgan('dev')) : null;
+
+        app.use(rateLimit({
+            windowMs: 15 * 60 * 1000,
+            max: 100,
+            message: "Too many requests from this IP, please try again after 15 minutes",
+            headers: true,
+        }));
+
         app.use(`/${config.VERSION}`, router);
 
         const server = app.listen(config.PORT, () => {

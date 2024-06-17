@@ -213,7 +213,8 @@ export class JobService {
   }
 
   async addJob(body) {
-    body.close = new Date(Date.now() + body.close * (24 * 60 * 60 * 1000))
+    if (body.close)
+      body.close = new Date(Date.now() + body.close * (24 * 60 * 60 * 1000))
     return (await this.job.create(body)).dataValues;
   }
 

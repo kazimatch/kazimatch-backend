@@ -54,6 +54,12 @@ const config = {
     consumerSecret: process.env.MPESA_CONSUMER_SECRET,
     passKey: process.env.MPESA_PASS_KEY,
   },
+  TWILIO: {
+    accountSid: process.env.TWILIO_ACCOUNT_SID,
+    authToken: process.env.TWILIO_AUTH_TOKEN,
+    serviceId: process.env.TWILIO_SERVICE_ID,
+
+  }
 };
 
 export { config };

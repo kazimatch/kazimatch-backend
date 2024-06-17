@@ -4,13 +4,13 @@ import { Thread, User } from "./index.js";
 
 export const Message = database.sequelize.define('Message', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     to: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,
@@ -18,7 +18,7 @@ export const Message = database.sequelize.define('Message', {
         }
     },
     from: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,
@@ -40,7 +40,7 @@ export const Message = database.sequelize.define('Message', {
         defaultValue: []
     },
     threadId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: Thread,

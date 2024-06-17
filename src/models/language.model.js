@@ -4,10 +4,10 @@ import { User } from "./user.model.js";
 
 export const Language = database.sequelize.define('Language', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
     },
     language: {
         type: DataTypes.STRING,
@@ -19,7 +19,7 @@ export const Language = database.sequelize.define('Language', {
         allowNull: false
     },
     applicantId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: User,
