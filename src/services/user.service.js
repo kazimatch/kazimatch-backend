@@ -142,7 +142,7 @@ export class UserService {
                     model: User,
                     as: 'referee'
                 },
-            ]
+            ],
             ...attrs
         })).map(user => user.dataValues);
     }
