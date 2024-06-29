@@ -19,6 +19,17 @@ router.get("/me", authMiddleware, async (req, res) => {
     }
 });
 
+router.get("/public/:id", authMiddleware, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const user = await userController.getUser(id);
+
+        return res.status(200).send(user);
+    } catch (error) {
+        return res.status(500).send({ message: error.message });
+    }
+});
+
 router.patch("/me", authMiddleware, async (req, res) => {
     try {
         const result = await userController.updateUser(req.user.id, req.body);
