@@ -33,7 +33,12 @@ export const Document = database.sequelize.define('Document', {
     path: {
         type: DataTypes.STRING,
         allowNull: true
-    }
+    },
+    status: {
+        type: DataTypes.ENUM('APPROVED', 'PENDING', 'REJECTED'),
+        allowNull: false,
+        defaultValue: 'PENDING'
+    },
 }, {
     tableName: 'documents',
 });
