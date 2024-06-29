@@ -24,6 +24,7 @@ router.get("/public/:id", authMiddleware, async (req, res) => {
         const id = req.params.id;
         const user = await userController.getUser(id);
 
+        delete user.refreshToken;
         return res.status(200).send(user);
     } catch (error) {
         return res.status(500).send({ message: error.message });
