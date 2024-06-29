@@ -41,6 +41,11 @@ export const Education = database.sequelize.define('Education', {
             model: User,
             key: 'id'
         }
+    },
+    status: {
+        type: DataTypes.ENUM('APPROVED', 'PENDING', 'REJECTED'),
+        allowNull: false,
+        defaultValue: 'PENDING'
     }
 }, {
     tableName: 'educations',

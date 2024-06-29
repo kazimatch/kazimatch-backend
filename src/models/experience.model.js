@@ -36,7 +36,12 @@ export const Experience = database.sequelize.define('Experience', {
             model: User,
             key: 'id'
         }
-    }
+    },
+    status: {
+        type: DataTypes.ENUM('APPROVED', 'PENDING', 'REJECTED'),
+        allowNull: false,
+        defaultValue: 'PENDING'
+    },
 }, {
     tableName: 'experiences',
 });
