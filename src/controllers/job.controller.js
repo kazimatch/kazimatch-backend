@@ -146,7 +146,7 @@ export class JobController {
     // get job application
     const application = await this.jobService.getMyApplications(userId);
     const hasApplied = application.find(
-      (app) => app.dataValues.job === jobId
+      (app) => app.job === jobId
     );
 
     if (hasApplied) return null;
