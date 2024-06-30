@@ -1,4 +1,4 @@
-import { User, Document, Language, Skill, Education, Experience, Referral, Notification } from "../models/index.js";
+import { User, Document, Language, Skill, Education, Experience, Referral, Notification, Feedback } from "../models/index.js";
 import { hashPassword } from "../utils/crypt.js";
 
 const attrs = {
@@ -35,6 +35,10 @@ export class UserService {
                 {
                     model: Skill,
                     as: "skills"
+                },
+                {
+                    model: Feedback,
+                    as: "feedbacks"
                 },
                 {
                     model: Experience,
