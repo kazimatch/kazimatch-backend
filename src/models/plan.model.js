@@ -19,7 +19,7 @@ export const Plan = database.sequelize.define(
       allowNull: false,
     },
     cycle: {
-      type: DataTypes.ENUM("monthly", "yearly", "job),
+      type: DataTypes.ENUM("monthly", "yearly", "job"),
       allowNull: false,
     },
     features: {
